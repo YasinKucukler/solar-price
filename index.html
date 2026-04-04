@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=700, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GES-O</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f57c00">
@@ -12,125 +12,153 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png" type="image/png">
 <style>
-:root{--primary:#f57c00;--primary-dark:#e65100;--secondary:#2e7d32;--danger:#d93025;--success:#2e7d32;--bg:#f5f5f0;--card:#fff;--text:#212121;--text2:#616161;--border:#e0e0e0;--shadow:0 1px 3px rgba(0,0,0,.12);--r:12px}
+:root{--primary:#f57c00;--primary-dark:#e65100;--danger:#d93025;--success:#2e7d32;--bg:#f5f5f0;--card:#fff;--text:#212121;--text2:#616161;--border:#e0e0e0;--shadow:0 1px 3px rgba(0,0,0,.12);--r:12px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
-header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:14px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-header h1{font-size:1.15rem;font-weight:700;letter-spacing:.5px}
-header .subtitle{font-size:.72rem;opacity:.85;margin-top:2px}
-.container{max-width:640px;margin:0 auto;padding:12px}
-.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
-.card-title{font-size:.95rem;font-weight:600;margin-bottom:12px;color:var(--primary)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:env(safe-area-inset-bottom,20px)}
+
+/* Header */
+header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:14px 16px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);padding-top:max(14px,env(safe-area-inset-top))}
+header h1{font-size:1.2rem;font-weight:700;letter-spacing:.5px}
+header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
+
+/* Layout */
+.container{max-width:640px;margin:0 auto;padding:10px}
+.card{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card-title{font-size:1rem;font-weight:600;margin-bottom:12px;color:var(--primary)}
+
+/* Form — 16px font zorunlu (iOS'ta otomatik zoom önlenir) */
 .form-group{margin-bottom:12px}
-.form-group label{display:block;font-size:.8rem;font-weight:500;color:var(--text2);margin-bottom:4px}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;background:#fff;color:var(--text)}
+.form-group label{display:block;font-size:.85rem;font-weight:500;color:var(--text2);margin-bottom:5px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;background:#fff;color:var(--text);-webkit-appearance:none;appearance:none;min-height:48px}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(245,124,0,.12)}
-.form-group textarea{resize:vertical;min-height:50px}
-.row{display:flex;gap:10px}.row .form-group{flex:1}
-.btn{padding:9px 16px;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.form-group textarea{resize:vertical;min-height:60px}
+
+/* .row: mobilde tek kolon, geniş ekranda yan yana */
+.row{display:flex;flex-direction:column;gap:0}
+.row .form-group{flex:1}
+@media(min-width:520px){
+  .row{flex-direction:row;gap:10px}
+}
+
+/* Butonlar — minimum 48px dokunma hedefi */
+.btn{padding:13px 18px;border:none;border-radius:10px;font-size:1rem;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;-webkit-tap-highlight-color:transparent}
 .btn-primary{background:var(--primary);color:#fff}
-.btn-danger{background:var(--danger);color:#fff;padding:6px 10px;font-size:.75rem}
+.btn-danger{background:var(--danger);color:#fff;padding:10px 14px;font-size:.88rem;min-height:44px}
 .btn-success{background:var(--success);color:#fff}
-.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary)}
+.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary)}
 .btn-block{width:100%}
-.btn-sm{padding:6px 10px;font-size:.78rem}
+.btn-sm{padding:10px 14px;font-size:.88rem;min-height:44px}
+.btn:active{opacity:.8;transform:scale(.98)}
 
 /* Tabs */
 .tabs{display:flex;margin-bottom:12px;background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
-.tab{flex:1;padding:11px 6px;text-align:center;cursor:pointer;font-weight:600;font-size:.8rem;border-bottom:3px solid transparent;color:var(--text2);transition:.2s}
-.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:rgba(245,124,0,.05)}
+.tab{flex:1;padding:14px 6px;text-align:center;cursor:pointer;font-weight:600;font-size:.88rem;border-bottom:3px solid transparent;color:var(--text2);transition:.2s;-webkit-tap-highlight-color:transparent}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:rgba(245,124,0,.06)}
 .tab-content{display:none}.tab-content.active{display:block}
 
-/* Product groups */
-.product-groups{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
-.group-btn{width:100%;padding:10px 14px;background:#fff3e0;color:var(--primary);border-radius:8px;font-size:.82rem;cursor:pointer;font-weight:600;border:2px solid transparent;transition:.2s;text-align:left;display:flex;justify-content:space-between;align-items:center}
-.group-btn.open{background:var(--primary);color:#fff;border-radius:8px 8px 0 0}
-.sub-panel{display:none;position:relative;background:#fff;border:2px solid var(--primary);border-radius:10px;padding:8px;margin:2px 0 8px;box-shadow:0 4px 12px rgba(0,0,0,.1);flex-basis:100%;width:100%}
-.sub-panel.show{display:block}
-.sub-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:.82rem;transition:.1s}
-.sub-item:hover{background:#fff3e0}
-.sub-item .si-name{font-weight:500}
-.sub-item .si-price{color:var(--primary);font-weight:600;font-size:.8rem}
+/* Ürün grupları */
+.product-groups{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.group-btn{width:100%;padding:13px 14px;background:#fff3e0;color:var(--primary);border-radius:10px;font-size:.95rem;cursor:pointer;font-weight:600;border:2px solid transparent;transition:.15s;text-align:left;display:flex;justify-content:space-between;align-items:center;min-height:50px;-webkit-tap-highlight-color:transparent}
+.group-btn.open{background:var(--primary);color:#fff;border-radius:10px 10px 0 0}
+.group-btn:active{opacity:.85}
 
-/* Material list */
-.mat-item{display:flex;gap:6px;align-items:center;padding:10px;margin-bottom:6px;background:#f8f9fa;border-radius:8px;flex-wrap:wrap}
-.mat-item .mi-name{flex:2;min-width:120px;font-weight:500;font-size:.85rem}
-.mat-item .mi-field{display:flex;flex-direction:column;gap:2px}
-.mat-item .mi-field label{font-size:.68rem;color:var(--text2);font-weight:500}
-.mat-item .mi-field input{width:80px;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.85rem;text-align:center}
-.mat-item .mi-total{font-weight:700;font-size:.85rem;color:var(--primary);min-width:80px;text-align:right}
-.mat-item .mi-del{background:var(--danger);color:#fff;border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;font-weight:700;font-size:.85rem}
+/* Eklenen ürün özet satırı */
+.added-row{display:flex;align-items:center;justify-content:space-between;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:8px 10px;margin:3px 0;font-size:.85rem;flex-wrap:wrap;gap:6px}
+.added-row .ar-name{font-weight:600;color:#2e7d32;flex:1;min-width:120px}
+.added-row .ar-info{color:var(--text2)}
+.added-row .ar-total{font-weight:700;color:#2e7d32}
+.added-row .ar-del{background:#d93025;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:.82rem;cursor:pointer;font-weight:700;min-height:36px;-webkit-tap-highlight-color:transparent}
 
-/* Summary */
+/* Ürün satırı içi (buildProductRow) */
+.prod-row-wrap{padding:8px;margin-bottom:5px;border-radius:10px}
+.prod-row-wrap.has-entry{background:#e8f5e9;border:1px solid #a5d6a7}
+.prod-row-wrap.no-entry{background:#f8f9fa}
+.prod-row-top{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.prod-row-name{font-weight:500;font-size:.9rem;flex:1;min-width:120px}
+.prod-row-price-hint{font-size:.72rem;color:var(--text2)}
+.prod-input-group{display:flex;align-items:center;gap:4px}
+.prod-input-group label{font-size:.72rem;color:var(--text2)}
+.prod-input-group input{width:60px;padding:8px 6px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;text-align:center;min-height:44px;background:#fff}
+.prod-add-btn{padding:10px 16px;font-size:.9rem;font-weight:600;min-height:44px;border:none;border-radius:8px;background:var(--success);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.prod-add-btn:active{opacity:.8}
+
+/* Düzenleme satırı (eklendikten sonra) */
+.prod-edit-row{display:flex;gap:6px;align-items:center;margin-top:6px;padding:6px 8px;background:rgba(255,255,255,.8);border-radius:8px;flex-wrap:wrap}
+.prod-edit-row input{width:60px;padding:8px 6px;border:1.5px solid #a5d6a7;border-radius:6px;font-size:16px;text-align:center;min-height:44px;background:#fff}
+.prod-edit-row .per-label{font-size:.75rem;color:var(--text2)}
+.prod-edit-row .per-total{color:#2e7d32;font-weight:700;font-size:.88rem;margin-left:auto}
+.prod-edit-del{background:#d93025;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:.82rem;cursor:pointer;font-weight:600;min-height:38px;-webkit-tap-highlight-color:transparent}
+
+/* Özet kutusu */
 .summary-box{background:linear-gradient(135deg,#f57c00,#e65100);color:#fff;border-radius:var(--r);padding:20px 16px;margin-bottom:12px;box-shadow:0 4px 12px rgba(245,124,0,.35)}
-.summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:.9rem}
-.summary-row.total{border-top:1px solid rgba(255,255,255,.3);margin-top:6px;padding-top:10px;font-size:1.05rem;font-weight:700}
-.summary-row.profit{font-size:1.2rem;font-weight:700}
+.summary-row{display:flex;justify-content:space-between;padding:7px 0;font-size:.95rem}
+.summary-row.total{border-top:1px solid rgba(255,255,255,.3);margin-top:6px;padding-top:12px;font-size:1.1rem;font-weight:700}
+.summary-row.profit{font-size:1.25rem;font-weight:700}
 .profit-pos{color:#b9f6ca}.profit-neg{color:#ffb3b3}
 .divider-s{height:1px;background:rgba(255,255,255,.2);margin:8px 0}
 
-/* Labor box */
+/* İşçilik kutusu */
 .labor-box{background:#e8f5e9;border:2px solid #4caf50;border-radius:var(--r);padding:14px;margin-bottom:12px}
-.labor-box .lb-title{font-weight:600;color:#1b5e20;font-size:.9rem;margin-bottom:8px}
-.labor-box .lb-row{display:flex;justify-content:space-between;font-size:.85rem;padding:3px 0}
-.labor-box .lb-total{font-size:1rem;font-weight:700;color:#1b5e20;border-top:1px solid #a5d6a7;padding-top:6px;margin-top:4px}
+.labor-box .lb-title{font-weight:600;color:#1b5e20;font-size:.95rem;margin-bottom:10px}
+.labor-box .lb-row{display:flex;justify-content:space-between;font-size:.9rem;padding:4px 0}
+.labor-box .lb-total{font-size:1.05rem;font-weight:700;color:#1b5e20;border-top:1px solid #a5d6a7;padding-top:8px;margin-top:6px}
 
-/* System info tag */
-.sys-tag{display:inline-flex;align-items:center;gap:4px;background:#fff3e0;color:var(--primary);border:1px solid #ffcc80;border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:600;margin:2px}
+/* kWp göstergesi */
+.kwp-display{background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:.9rem;font-weight:600}
 
-/* History */
-.history-item{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer}
-.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.history-customer{font-weight:600;font-size:.95rem}
-.history-date{font-size:.75rem;color:var(--text2)}
-.history-details{display:flex;justify-content:space-between;font-size:.8rem;color:var(--text2);flex-wrap:wrap;gap:4px}
-.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600}
+/* Sistem etiketi */
+.sys-tag{display:inline-flex;align-items:center;gap:4px;background:#fff3e0;color:var(--primary);border:1px solid #ffcc80;border-radius:20px;padding:4px 12px;font-size:.78rem;font-weight:600;margin:2px}
+
+/* Geçmiş */
+.history-item{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.history-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.history-customer{font-weight:600;font-size:1rem}
+.history-date{font-size:.8rem;color:var(--text2)}
+.history-details{display:flex;justify-content:space-between;font-size:.85rem;color:var(--text2);flex-wrap:wrap;gap:4px}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.78rem;font-weight:600}
 .badge-s{background:#e8f5e9;color:#2e7d32}.badge-d{background:#fce8e6;color:#d93025}
-.history-actions{display:flex;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
-.empty-state{text-align:center;padding:40px 20px;color:var(--text2)}
-.empty-state span{font-size:3rem;display:block;margin-bottom:10px}
+.history-actions{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.history-actions .btn{flex:1}
+.empty-state{text-align:center;padding:50px 20px;color:var(--text2)}
+.empty-state span{font-size:3.5rem;display:block;margin-bottom:12px}
 
 /* Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:16px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:flex-end;justify-content:center;padding:0}
 .modal-overlay.show{display:flex}
-.modal{background:var(--card);border-radius:var(--r);padding:20px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto}
-.modal h3{margin-bottom:14px;font-size:1rem}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.modal{background:var(--card);border-radius:var(--r) var(--r) 0 0;padding:20px;width:100%;max-height:90vh;overflow-y:auto;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.modal h3{margin-bottom:14px;font-size:1.05rem}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+@media(min-width:520px){
+  .modal-overlay{align-items:center;padding:16px}
+  .modal{border-radius:var(--r);max-width:480px}
+}
 
-/* Price list editor */
-.price-group{margin-bottom:14px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.price-group-header{background:#f8f9fa;padding:10px 14px;font-weight:600;font-size:.85rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-.price-group-header .arrow{transition:.2s;font-size:.7rem}
+/* Fiyat listesi */
+.price-group{margin-bottom:12px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.price-group-header{background:#f8f9fa;padding:12px 14px;font-weight:600;font-size:.9rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;min-height:48px;-webkit-tap-highlight-color:transparent}
+.price-group-header .arrow{transition:.2s;font-size:.75rem}
 .price-group-header.open .arrow{transform:rotate(180deg)}
 .price-group-body{display:none;padding:8px}
 .price-group-body.show{display:block}
-.price-row{display:flex;gap:8px;align-items:center;padding:6px 4px;font-size:.82rem}
-.price-row .pr-name{flex:2;font-weight:500}
-.price-row input{width:80px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.82rem;text-align:center}
+.price-row{display:flex;gap:8px;align-items:center;padding:7px 4px;font-size:.88rem;flex-wrap:wrap}
+.price-row .pr-name{flex:2;font-weight:500;min-width:100px}
+.price-row .pr-field{display:flex;flex-direction:column;gap:2px;align-items:center}
 .price-row .pr-label{font-size:.7rem;color:var(--text2)}
+.price-row input{width:90px;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;text-align:center;min-height:44px}
 
-/* New product form */
-.new-product-form{background:#fff3e0;border-radius:8px;padding:12px;margin-top:10px}
-.new-product-form .row{flex-wrap:wrap}
+/* Yeni ürün formu */
+.new-product-form{background:#fff3e0;border-radius:10px;padding:14px;margin-top:10px}
 
-.text-muted{color:var(--text2);font-size:.82rem}
+.text-muted{color:var(--text2);font-size:.88rem}
 .text-right{text-align:right}
 .mt8{margin-top:8px}.mb8{margin-bottom:8px}
 
-/* kwp badge */
-.kwp-display{background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;border-radius:8px;padding:8px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:.85rem;font-weight:600}
-
 /* Toast */
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;color:#fff;font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;max-width:90%;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toast{position:fixed;top:max(20px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);padding:13px 24px;border-radius:12px;color:#fff;font-weight:600;font-size:.95rem;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;max-width:92%;box-shadow:0 4px 16px rgba(0,0,0,.2)}
 .toast.show{opacity:1}
 .toast-success{background:#2e7d32}
 .toast-error{background:#d93025}
 .toast-info{background:#f57c00}
-
-@media(max-width:480px){
-  .mat-item{flex-wrap:wrap}
-  .mat-item .mi-field input{width:65px}
-}
 </style>
 </head>
 <body>
@@ -484,11 +512,11 @@ function getGroupAddedSummary(groupItems) {
     if (entries.length > 0) {
       const isMetre = p.name.includes('(mt)');
       entries.forEach(m => {
-        html += `<div style="display:flex;align-items:center;justify-content:space-between;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:4px 10px;margin:3px 0;font-size:.75rem">
-          <span style="font-weight:600;color:#2e7d32">${esc(p.name)}</span>
-          <span style="color:var(--text2)">${m.qty} ${isMetre ? 'mt' : 'ad'} x ${fmtMoney(m.price)}</span>
-          <span style="font-weight:700;color:#2e7d32">${fmtMoney(m.qty * m.price)}</span>
-          <button onclick="event.stopPropagation();removeMat(${materials.indexOf(m)})" style="background:#d93025;color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:.65rem;cursor:pointer;font-weight:700;margin-left:4px">Sil</button>
+        html += `<div class="added-row">
+          <span class="ar-name">${esc(p.name)}</span>
+          <span class="ar-info">${m.qty} ${isMetre ? 'mt' : 'ad'} × ${fmtMoney(m.price)}</span>
+          <span class="ar-total">${fmtMoney(m.qty * m.price)}</span>
+          <button class="ar-del" onclick="event.stopPropagation();removeMat(${materials.indexOf(m)})">Sil</button>
         </div>`;
       });
     }
@@ -507,13 +535,14 @@ function renderProductGroups() {
     const isOpen = openGroup === g;
     const safeName = g.replace(/'/g, "\\'");
     html += `<button class="group-btn${isOpen ? ' open' : ''}" onclick="toggleGroup('${safeName}')">
-      ${esc(g)}${count > 0 ? ` <span style="background:${isOpen ? 'rgba(255,255,255,.9)' : 'var(--primary)'};color:${isOpen ? 'var(--primary)' : '#fff'};border-radius:50%;padding:1px 6px;font-size:.68rem;margin-left:2px;font-weight:700">${count}</span>` : ''}
+      <span>${esc(g)}</span>
+      ${count > 0 ? `<span style="background:${isOpen ? 'rgba(255,255,255,.9)' : 'var(--primary)'};color:${isOpen ? 'var(--primary)' : '#fff'};border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700">${count}</span>` : '<span style="font-size:.85rem;opacity:.6">›</span>'}
     </button>`;
 
     if (isOpen) {
       const items = groups[g];
       const hasSubgroups = items.some(p => p.subgroup);
-      html += `<div style="width:100%;border:2px solid var(--primary);border-top:none;border-radius:0 0 8px 8px;padding:8px;margin:0 0 4px;background:#fff">`;
+      html += `<div style="width:100%;border:2px solid var(--primary);border-top:none;border-radius:0 0 10px 10px;padding:10px;margin:0 0 6px;background:#fff">`;
 
       if (hasSubgroups) {
         const subgroups = [...new Set(items.map(p => p.subgroup).filter(Boolean))];
@@ -522,18 +551,18 @@ function renderProductGroups() {
             const safeSg = sg.replace(/'/g, "\\'");
             const sgItems = items.filter(p => p.subgroup === sg);
             const sgCount = sgItems.reduce((s, p) => s + getProductEntries(p.id).length, 0);
-            html += `<button onclick="event.stopPropagation();selectSubgroup('${safeSg}')" style="width:100%;padding:8px 12px;margin-bottom:4px;background:#fff8f0;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--primary);display:flex;justify-content:space-between;align-items:center">
+            html += `<button onclick="event.stopPropagation();selectSubgroup('${safeSg}')" style="width:100%;padding:12px 14px;margin-bottom:6px;background:#fff8f0;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:.95rem;font-weight:600;color:var(--primary);display:flex;justify-content:space-between;align-items:center;min-height:50px">
               <span>${esc(sg)}</span>
-              <span style="display:flex;align-items:center;gap:6px">
-                ${sgCount > 0 ? '<span style="background:#2e7d32;color:#fff;border-radius:10px;padding:1px 7px;font-size:.68rem">' + sgCount + '</span>' : ''}
-                <span style="font-size:.7rem;color:var(--text2)">&#9654;</span>
+              <span style="display:flex;align-items:center;gap:8px">
+                ${sgCount > 0 ? '<span style="background:#2e7d32;color:#fff;border-radius:10px;padding:2px 10px;font-size:.78rem">' + sgCount + '</span>' : ''}
+                <span style="font-size:.9rem;color:var(--text2)">›</span>
               </span>
             </button>`;
           });
         } else {
-          html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="event.stopPropagation();openSubgroup=null;renderProductGroups()" style="background:var(--primary);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;font-weight:600">&#9664; Geri</button>
-            <span style="font-weight:600;font-size:.85rem;color:var(--primary)">${esc(openSubgroup)}</span>
+          html += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <button onclick="event.stopPropagation();openSubgroup=null;renderProductGroups()" style="background:var(--primary);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:.9rem;cursor:pointer;font-weight:600;min-height:44px">‹ Geri</button>
+            <span style="font-weight:700;font-size:.95rem;color:var(--primary)">${esc(openSubgroup)}</span>
           </div>`;
           items.filter(p => p.subgroup === openSubgroup).forEach(p => { html += buildProductRow(p); });
         }
@@ -545,7 +574,7 @@ function renderProductGroups() {
     } else {
       const added = getGroupAddedSummary(groups[g]);
       if (added) {
-        html += `<div style="flex-basis:100%;width:100%;padding:2px 0 4px">${added}</div>`;
+        html += `<div style="width:100%;padding:2px 0 4px">${added}</div>`;
       }
     }
   });
@@ -573,39 +602,34 @@ function buildProductRow(p) {
   const isMetre = p.name.includes('(mt)');
   const qtyLabel = isMetre ? 'Metre' : 'Adet';
   let rangeHint = '';
-  if (p.priceMax) rangeHint = `<span style="font-size:.65rem;color:var(--text2);margin-left:4px">(${fmtMoney(p.price)} - ${fmtMoney(p.priceMax)})</span>`;
+  if (p.priceMax) rangeHint = `<span class="prod-row-price-hint">(${fmtMoney(p.price)} – ${fmtMoney(p.priceMax)})</span>`;
   const entries = getProductEntries(p.id);
   const hasEntries = entries.length > 0;
 
-  let html = `<div style="padding:6px 8px;margin-bottom:4px;border-radius:8px;${hasEntries ? 'background:#e8f5e9;border:1px solid #a5d6a7;' : 'background:#f8f9fa;'}">
-    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-      <span style="font-weight:500;font-size:.82rem;flex:1;min-width:100px">${esc(p.name)}${rangeHint}</span>
-      <div style="display:flex;gap:4px;align-items:center">
-        <input type="number" id="qty_${p.id}" value="1" min="0" style="width:50px;padding:4px;border:1.5px solid var(--border);border-radius:6px;font-size:.8rem;text-align:center" onclick="event.stopPropagation()" placeholder="${qtyLabel}">
-        <span style="font-size:.65rem;color:var(--text2)">${qtyLabel}</span>
+  let html = `<div class="prod-row-wrap ${hasEntries ? 'has-entry' : 'no-entry'}">
+    <div class="prod-row-top">
+      <span class="prod-row-name">${esc(p.name)} ${rangeHint}</span>
+      <div class="prod-input-group">
+        <input type="number" id="qty_${p.id}" value="1" min="0" onclick="event.stopPropagation()" placeholder="${qtyLabel}">
+        <label>${qtyLabel}</label>
       </div>
-      <div style="display:flex;gap:4px;align-items:center">
-        <input type="number" id="prc_${p.id}" value="${p.price}" min="0" step="0.1" style="width:80px;padding:4px;border:1.5px solid var(--border);border-radius:6px;font-size:.8rem;text-align:center" onclick="event.stopPropagation()">
-        <span style="font-size:.65rem;color:var(--text2)">TL</span>
+      <div class="prod-input-group">
+        <input type="number" id="prc_${p.id}" value="${p.price}" min="0" step="0.1" onclick="event.stopPropagation()">
+        <label>TL</label>
       </div>
-      <button class="btn btn-success btn-sm" onclick="event.stopPropagation();addProductWithQty('${p.id}')" style="padding:4px 12px;font-size:.75rem">Ekle</button>
+      <button class="prod-add-btn" onclick="event.stopPropagation();addProductWithQty('${p.id}')">+ Ekle</button>
     </div>`;
 
   if (hasEntries) {
     entries.forEach(m => {
       const idx = materials.indexOf(m);
-      html += `<div style="display:flex;gap:6px;align-items:center;margin-top:4px;padding:4px 6px;background:rgba(255,255,255,.7);border-radius:6px;font-size:.78rem;flex-wrap:wrap">
-        <div style="display:flex;gap:4px;align-items:center">
-          <input type="number" value="${m.qty}" min="0" style="width:45px;padding:3px;border:1.5px solid #a5d6a7;border-radius:4px;font-size:.78rem;text-align:center" onchange="updateMat(${idx},'qty',this.value)" onclick="event.stopPropagation()">
-          <span style="font-size:.65rem;color:var(--text2)">${isMetre ? 'mt' : 'ad'}</span>
-        </div>
-        <span style="color:var(--text2);font-size:.7rem">x</span>
-        <div style="display:flex;gap:4px;align-items:center">
-          <input type="number" value="${m.price}" min="0" step="0.1" style="width:75px;padding:3px;border:1.5px solid #a5d6a7;border-radius:4px;font-size:.78rem;text-align:center" onchange="updateMat(${idx},'price',this.value)" onclick="event.stopPropagation()">
-          <span style="font-size:.65rem;color:var(--text2)">TL</span>
-        </div>
-        <span style="color:#2e7d32;font-weight:700;font-size:.78rem;margin-left:auto">= ${fmtMoney(m.qty * m.price)}</span>
-        <button onclick="removeMat(${idx})" style="background:#d93025;color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:.7rem;cursor:pointer;font-weight:600">Sil</button>
+      html += `<div class="prod-edit-row">
+        <input type="number" value="${m.qty}" min="0" onchange="updateMat(${idx},'qty',this.value)" onclick="event.stopPropagation()">
+        <span class="per-label">${isMetre ? 'mt' : 'ad'} ×</span>
+        <input type="number" value="${m.price}" min="0" step="0.1" onchange="updateMat(${idx},'price',this.value)" onclick="event.stopPropagation()">
+        <span class="per-label">TL</span>
+        <span class="per-total">= ${fmtMoney(m.qty * m.price)}</span>
+        <button class="prod-edit-del" onclick="removeMat(${idx})">Sil</button>
       </div>`;
     });
   }
@@ -650,19 +674,21 @@ function showMaterialList() {
     const isMetre = m.name.includes('(mt)');
     const rowTotal = m.qty * m.price;
     total += rowTotal;
-    return `<div style="display:flex;gap:6px;align-items:center;padding:8px;margin-bottom:4px;background:#f8f9fa;border-radius:8px;flex-wrap:wrap;${rowTotal > 0 ? '' : 'opacity:.5'}">
-      <div style="flex:2;min-width:120px;font-weight:500;font-size:.82rem">${esc(m.name)}</div>
-      <div style="display:flex;gap:4px;align-items:center">
-        <input type="number" value="${m.qty}" min="0" style="width:50px;padding:4px;border:1.5px solid var(--border);border-radius:5px;font-size:.8rem;text-align:center" onchange="updateMatFromList(${i},'qty',this.value)">
-        <span style="font-size:.65rem;color:var(--text2)">${isMetre ? 'mt' : 'ad'}</span>
+    return `<div style="padding:10px;margin-bottom:6px;background:#f8f9fa;border-radius:10px;${rowTotal === 0 ? 'opacity:.5' : ''}">
+      <div style="font-weight:600;font-size:.9rem;margin-bottom:8px">${esc(m.name)}</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div class="prod-input-group">
+          <input type="number" value="${m.qty}" min="0" style="width:65px;min-height:44px;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;text-align:center" onchange="updateMatFromList(${i},'qty',this.value)">
+          <label style="font-size:.78rem;color:var(--text2)">${isMetre ? 'mt' : 'ad'}</label>
+        </div>
+        <span style="color:var(--text2)">×</span>
+        <div class="prod-input-group">
+          <input type="number" value="${m.price}" min="0" step="0.1" style="width:90px;min-height:44px;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;text-align:center" onchange="updateMatFromList(${i},'price',this.value)">
+          <label style="font-size:.78rem;color:var(--text2)">TL</label>
+        </div>
+        <span style="font-weight:700;color:var(--primary);margin-left:auto">${fmtMoney(rowTotal)}</span>
+        <button onclick="removeMatFromList(${i})" style="background:#d93025;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-size:.88rem;cursor:pointer;font-weight:600;min-height:44px">Sil</button>
       </div>
-      <span style="font-size:.7rem;color:var(--text2)">x</span>
-      <div style="display:flex;gap:4px;align-items:center">
-        <input type="number" value="${m.price}" min="0" step="0.1" style="width:75px;padding:4px;border:1.5px solid var(--border);border-radius:5px;font-size:.8rem;text-align:center" onchange="updateMatFromList(${i},'price',this.value)">
-        <span style="font-size:.65rem;color:var(--text2)">TL</span>
-      </div>
-      <div style="font-weight:700;font-size:.82rem;color:var(--primary);min-width:80px;text-align:right">${fmtMoney(rowTotal)}</div>
-      <button onclick="removeMatFromList(${i})" style="background:#d93025;color:#fff;border:none;border-radius:5px;padding:4px 8px;font-size:.72rem;cursor:pointer;font-weight:600">Sil</button>
     </div>`;
   }).join('');
 
@@ -953,17 +979,17 @@ function renderPriceEditor() {
     groups[g].forEach(p => {
       html += `<div class="price-row">
         <span class="pr-name">${esc(p.name)}</span>
-        <div>
+        <div class="pr-field">
           <span class="pr-label">Fiyat</span>
           <input type="number" value="${p.price}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','price',this.value)">
         </div>`;
       if (p.priceMax !== undefined && p.priceMax !== null) {
-        html += `<div>
+        html += `<div class="pr-field">
           <span class="pr-label">Max</span>
           <input type="number" value="${p.priceMax}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','priceMax',this.value)">
         </div>`;
       }
-      html += `<button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${p.id}')" title="Sil" style="padding:4px 8px">X</button>
+      html += `<button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${p.id}')">Sil</button>
       </div>`;
     });
     html += '</div></div>';
