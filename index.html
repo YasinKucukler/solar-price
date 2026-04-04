@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=700, user-scalable=yes">
+<title>GES-O</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f57c00">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GES-O">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png" type="image/png">
+<style>
+:root{--primary:#f57c00;--primary-dark:#e65100;--secondary:#2e7d32;--danger:#d93025;--success:#2e7d32;--bg:#f5f5f0;--card:#fff;--text:#212121;--text2:#616161;--border:#e0e0e0;--shadow:0 1px 3px rgba(0,0,0,.12);--r:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
+header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:14px 20px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+header h1{font-size:1.15rem;font-weight:700;letter-spacing:.5px}
+header .subtitle{font-size:.72rem;opacity:.85;margin-top:2px}
+.container{max-width:640px;margin:0 auto;padding:12px}
+.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card-title{font-size:.95rem;font-weight:600;margin-bottom:12px;color:var(--primary)}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:.8rem;font-weight:500;color:var(--text2);margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;background:#fff;color:var(--text)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(245,124,0,.12)}
+.form-group textarea{resize:vertical;min-height:50px}
+.row{display:flex;gap:10px}.row .form-group{flex:1}
+.btn{padding:9px 16px;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-danger{background:var(--danger);color:#fff;padding:6px 10px;font-size:.75rem}
+.btn-success{background:var(--success);color:#fff}
+.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary)}
+.btn-block{width:100%}
+.btn-sm{padding:6px 10px;font-size:.78rem}
+
+/* Tabs */
+.tabs{display:flex;margin-bottom:12px;background:var(--card);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.tab{flex:1;padding:11px 6px;text-align:center;cursor:pointer;font-weight:600;font-size:.8rem;border-bottom:3px solid transparent;color:var(--text2);transition:.2s}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary);background:rgba(245,124,0,.05)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* Product groups */
+.product-groups{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.group-btn{width:100%;padding:10px 14px;background:#fff3e0;color:var(--primary);border-radius:8px;font-size:.82rem;cursor:pointer;font-weight:600;border:2px solid transparent;transition:.2s;text-align:left;display:flex;justify-content:space-between;align-items:center}
+.group-btn.open{background:var(--primary);color:#fff;border-radius:8px 8px 0 0}
+.sub-panel{display:none;position:relative;background:#fff;border:2px solid var(--primary);border-radius:10px;padding:8px;margin:2px 0 8px;box-shadow:0 4px 12px rgba(0,0,0,.1);flex-basis:100%;width:100%}
+.sub-panel.show{display:block}
+.sub-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:.82rem;transition:.1s}
+.sub-item:hover{background:#fff3e0}
+.sub-item .si-name{font-weight:500}
+.sub-item .si-price{color:var(--primary);font-weight:600;font-size:.8rem}
+
+/* Material list */
+.mat-item{display:flex;gap:6px;align-items:center;padding:10px;margin-bottom:6px;background:#f8f9fa;border-radius:8px;flex-wrap:wrap}
+.mat-item .mi-name{flex:2;min-width:120px;font-weight:500;font-size:.85rem}
+.mat-item .mi-field{display:flex;flex-direction:column;gap:2px}
+.mat-item .mi-field label{font-size:.68rem;color:var(--text2);font-weight:500}
+.mat-item .mi-field input{width:80px;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.85rem;text-align:center}
+.mat-item .mi-total{font-weight:700;font-size:.85rem;color:var(--primary);min-width:80px;text-align:right}
+.mat-item .mi-del{background:var(--danger);color:#fff;border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;font-weight:700;font-size:.85rem}
+
+/* Summary */
+.summary-box{background:linear-gradient(135deg,#f57c00,#e65100);color:#fff;border-radius:var(--r);padding:20px 16px;margin-bottom:12px;box-shadow:0 4px 12px rgba(245,124,0,.35)}
+.summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:.9rem}
+.summary-row.total{border-top:1px solid rgba(255,255,255,.3);margin-top:6px;padding-top:10px;font-size:1.05rem;font-weight:700}
+.summary-row.profit{font-size:1.2rem;font-weight:700}
+.profit-pos{color:#b9f6ca}.profit-neg{color:#ffb3b3}
+.divider-s{height:1px;background:rgba(255,255,255,.2);margin:8px 0}
+
+/* Labor box */
+.labor-box{background:#e8f5e9;border:2px solid #4caf50;border-radius:var(--r);padding:14px;margin-bottom:12px}
+.labor-box .lb-title{font-weight:600;color:#1b5e20;font-size:.9rem;margin-bottom:8px}
+.labor-box .lb-row{display:flex;justify-content:space-between;font-size:.85rem;padding:3px 0}
+.labor-box .lb-total{font-size:1rem;font-weight:700;color:#1b5e20;border-top:1px solid #a5d6a7;padding-top:6px;margin-top:4px}
+
+/* System info tag */
+.sys-tag{display:inline-flex;align-items:center;gap:4px;background:#fff3e0;color:var(--primary);border:1px solid #ffcc80;border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:600;margin:2px}
+
+/* History */
+.history-item{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer}
+.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.history-customer{font-weight:600;font-size:.95rem}
+.history-date{font-size:.75rem;color:var(--text2)}
+.history-details{display:flex;justify-content:space-between;font-size:.8rem;color:var(--text2);flex-wrap:wrap;gap:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600}
+.badge-s{background:#e8f5e9;color:#2e7d32}.badge-d{background:#fce8e6;color:#d93025}
+.history-actions{display:flex;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text2)}
+.empty-state span{font-size:3rem;display:block;margin-bottom:10px}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:var(--r);padding:20px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto}
+.modal h3{margin-bottom:14px;font-size:1rem}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* Price list editor */
+.price-group{margin-bottom:14px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.price-group-header{background:#f8f9fa;padding:10px 14px;font-weight:600;font-size:.85rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.price-group-header .arrow{transition:.2s;font-size:.7rem}
+.price-group-header.open .arrow{transform:rotate(180deg)}
+.price-group-body{display:none;padding:8px}
+.price-group-body.show{display:block}
+.price-row{display:flex;gap:8px;align-items:center;padding:6px 4px;font-size:.82rem}
+.price-row .pr-name{flex:2;font-weight:500}
+.price-row input{width:80px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:.82rem;text-align:center}
+.price-row .pr-label{font-size:.7rem;color:var(--text2)}
+
+/* New product form */
+.new-product-form{background:#fff3e0;border-radius:8px;padding:12px;margin-top:10px}
+.new-product-form .row{flex-wrap:wrap}
+
+.text-muted{color:var(--text2);font-size:.82rem}
+.text-right{text-align:right}
+.mt8{margin-top:8px}.mb8{margin-bottom:8px}
+
+/* kwp badge */
+.kwp-display{background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;border-radius:8px;padding:8px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:.85rem;font-weight:600}
+
+/* Toast */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;color:#fff;font-weight:600;font-size:.9rem;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;max-width:90%;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toast.show{opacity:1}
+.toast-success{background:#2e7d32}
+.toast-error{background:#d93025}
+.toast-info{background:#f57c00}
+
+@media(max-width:480px){
+  .mat-item{flex-wrap:wrap}
+  .mat-item .mi-field input{width:65px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#9728; GES-O</h1>
+  <div class="subtitle">Günes Enerjisi Kurulum Fiyat Hesaplama</div>
+  <button id="installBtn" class="btn btn-sm" onclick="installApp()" style="display:none;margin:8px auto 0;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4)">Uygulamayi Yukle</button>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('calc')">Hesaplama</div>
+    <div class="tab" onclick="switchTab('history')">Gecmis</div>
+    <div class="tab" onclick="switchTab('prices')">Fiyat Listesi</div>
+  </div>
+
+  <!-- CALCULATOR TAB -->
+  <div id="tab-calc" class="tab-content active">
+    <div class="card">
+      <div class="card-title">Musteri Bilgisi</div>
+      <div class="row">
+        <div class="form-group"><label>Musteri Adi</label><input type="text" id="customerName" placeholder="Ornek: Ahmet Bey"></div>
+        <div class="form-group"><label>Tarih</label><input type="date" id="projectDate"></div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <label>Sistem Tipi</label>
+          <select id="systemType">
+            <option value="">Seciniz...</option>
+            <option value="On-Grid (Sebeke Baglan)">On-Grid (Sebeke Bagli)</option>
+            <option value="Off-Grid (Sebeke Bagimsiz)">Off-Grid (Sebeke Bagimsiz)</option>
+            <option value="Hibrit">Hibrit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Kurulum Yeri</label>
+          <select id="installLocation">
+            <option value="">Seciniz...</option>
+            <option value="Cati Ustu">Cati Ustu</option>
+            <option value="Zemin">Zemin Montaj</option>
+            <option value="Carport">Carport / Gölgelik</option>
+            <option value="Balkon / Cephe">Balkon / Cephe</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Not</label><textarea id="projectNote" placeholder="Proje ile ilgili notlar, ozel durumlar..."></textarea></div>
+    </div>
+
+    <div id="productGroups"></div>
+
+    <button class="btn btn-primary btn-block" onclick="showMaterialList()" style="margin-bottom:12px" id="matListBtn">Malzeme Listesini Goruntule (<span id="matCount">0</span> kalem)</button>
+
+    <!-- KWp display -->
+    <div class="kwp-display" id="kwpDisplay" style="display:none">
+      <span>Tahmini Sistem Kapasitesi</span>
+      <span id="kwpValue">0 kWp</span>
+    </div>
+
+    <!-- Labor -->
+    <div class="labor-box">
+      <div class="lb-title">Kurulum Isciligi</div>
+      <div class="lb-row"><span>Malzeme Toplami</span><span id="labMatSum">0 TL</span></div>
+      <div class="lb-row"><span>Iscilik Orani</span><span>%10</span></div>
+      <div class="lb-row"><span>Hesaplanan Iscilik</span><span id="labCalc">0 TL</span></div>
+      <div class="lb-row"><span>Taban Iscilik</span><span>8.000 TL</span></div>
+      <div class="lb-row lb-total"><span>Iscilik Toplam</span><span id="labTotal">8.000 TL</span></div>
+    </div>
+
+    <!-- Offer -->
+    <div class="card">
+      <div class="card-title">Musteriye Teklif Fiyati</div>
+      <div class="form-group">
+        <label>Toplam Teklif Fiyati (TL)</label>
+        <input type="number" id="offerPrice" placeholder="0" oninput="calculate()" min="0">
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-box">
+      <div class="summary-row"><span>Malzeme Toplam</span><span id="sumMat">0 TL</span></div>
+      <div class="summary-row"><span>Kurulum Isciligi</span><span id="sumLab">0 TL</span></div>
+      <div class="summary-row total"><span>Toplam Maliyet</span><span id="sumCost">0 TL</span></div>
+      <div class="divider-s"></div>
+      <div class="summary-row"><span>Teklif Fiyati</span><span id="sumOffer">0 TL</span></div>
+      <div class="summary-row profit"><span>KAR</span><span id="sumProfit" class="profit-pos">0 TL</span></div>
+      <div class="summary-row"><span>Kar Marji</span><span id="sumMargin">%0</span></div>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-success" style="flex:1;min-width:45%" onclick="saveProject()">Kaydet</button>
+      <button class="btn btn-primary" style="flex:1;min-width:45%" onclick="newCustomer()">Yeni Musteri</button>
+      <button class="btn btn-outline btn-block" onclick="clearMaterials()">Malzemeleri Temizle</button>
+    </div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div id="tab-history" class="tab-content">
+    <div id="historyList"></div>
+  </div>
+
+  <!-- PRICES TAB -->
+  <div id="tab-prices" class="tab-content">
+    <div class="card">
+      <div class="card-title">Fiyat Listesi Guncelle</div>
+      <p class="text-muted mb8">Fiyatlari guncelleyin. Degisiklikler otomatik kaydedilir.</p>
+      <div id="priceEditor"></div>
+      <div class="new-product-form">
+        <div class="card-title">Yeni Urun Ekle</div>
+        <div class="row">
+          <div class="form-group"><label>Grup</label><input type="text" id="newGroup" placeholder="Ornek: Gunes Paneli"></div>
+          <div class="form-group"><label>Urun Adi</label><input type="text" id="newName" placeholder="Ornek: 550W Monokristal"></div>
+        </div>
+        <div class="row">
+          <div class="form-group"><label>Fiyat (TL)</label><input type="number" id="newPrice" placeholder="0" min="0"></div>
+          <div class="form-group"><label>Max Fiyat (bos birakilabilir)</label><input type="number" id="newPriceMax" placeholder="" min="0"></div>
+        </div>
+        <button class="btn btn-primary btn-block btn-sm mt8" onclick="addNewProduct()">Urun Ekle</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- Material List Modal -->
+<div class="modal-overlay" id="matListModal">
+  <div class="modal" style="max-width:560px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="margin:0">Malzeme Listesi</h3>
+      <button class="btn btn-outline btn-sm" onclick="closeMatList()">Kapat</button>
+    </div>
+    <div id="matListBody"></div>
+    <div id="matListTotal" style="margin-top:10px;padding-top:10px;border-top:2px solid var(--border);display:flex;justify-content:space-between;font-weight:700;font-size:.95rem">
+      <span>Toplam</span><span id="matListSum">0 TL</span>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" id="modalDeleteBtn">Sil</button>
+      <button class="btn btn-primary btn-sm" onclick="loadToEditor()">Duzenle</button>
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">Kapat</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ DEFAULT PRODUCT CATALOG ============
+const DEFAULT_CATALOG = [
+  // Gunes Paneli
+  {id:"pan400",group:"Gunes Paneli",subgroup:"Monokristal",name:"400W Monokristal (adet)",price:4200,priceMax:5000},
+  {id:"pan450",group:"Gunes Paneli",subgroup:"Monokristal",name:"450W Monokristal (adet)",price:4800,priceMax:5800},
+  {id:"pan500",group:"Gunes Paneli",subgroup:"Monokristal",name:"500W Monokristal (adet)",price:5400,priceMax:6500},
+  {id:"pan550",group:"Gunes Paneli",subgroup:"Monokristal",name:"550W Monokristal (adet)",price:6000,priceMax:7200},
+  {id:"pan600",group:"Gunes Paneli",subgroup:"Monokristal",name:"600W Monokristal (adet)",price:6800,priceMax:8000},
+  {id:"panb550",group:"Gunes Paneli",subgroup:"Bifacial",name:"550W Bifacial (adet)",price:7000,priceMax:8500},
+  {id:"panb600",group:"Gunes Paneli",subgroup:"Bifacial",name:"600W Bifacial (adet)",price:7800,priceMax:9200},
+
+  // Inverter
+  {id:"inv_h3",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 3kW",price:22000,priceMax:28000},
+  {id:"inv_h5",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 5kW",price:30000,priceMax:38000},
+  {id:"inv_h8",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 8kW",price:42000,priceMax:52000},
+  {id:"inv_h10",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 10kW",price:50000,priceMax:62000},
+  {id:"inv_h15",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 15kW",price:72000,priceMax:88000},
+  {id:"inv_h20",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 20kW",price:92000,priceMax:115000},
+  {id:"inv_s3",group:"Inverter",subgroup:"String",name:"String Inverter 3kW",price:12000,priceMax:16000},
+  {id:"inv_s5",group:"Inverter",subgroup:"String",name:"String Inverter 5kW",price:16000,priceMax:22000},
+  {id:"inv_s8",group:"Inverter",subgroup:"String",name:"String Inverter 8kW",price:22000,priceMax:30000},
+  {id:"inv_s10",group:"Inverter",subgroup:"String",name:"String Inverter 10kW",price:27000,priceMax:36000},
+  {id:"inv_s15",group:"Inverter",subgroup:"String",name:"String Inverter 15kW",price:38000,priceMax:50000},
+  {id:"inv_s20",group:"Inverter",subgroup:"String",name:"String Inverter 20kW",price:48000,priceMax:65000},
+
+  // Aku / Batarya
+  {id:"bat_l5",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LiFePO4 5kWh",price:55000,priceMax:70000},
+  {id:"bat_l10",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LiFePO4 10kWh",price:100000,priceMax:130000},
+  {id:"bat_l20",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LiFePO4 20kWh",price:190000,priceMax:240000},
+  {id:"bat_a100",group:"Aku / Batarya",subgroup:"AGM / Gel",name:"AGM 100Ah 12V",price:5500,priceMax:7000},
+  {id:"bat_a200",group:"Aku / Batarya",subgroup:"AGM / Gel",name:"AGM 200Ah 12V",price:10000,priceMax:13000},
+  {id:"bat_a200g",group:"Aku / Batarya",subgroup:"AGM / Gel",name:"Gel 200Ah 12V",price:12000,priceMax:15000},
+
+  // Montaj Sistemi
+  {id:"mnt_ray",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Aluminyum Ray 40x40mm (mt)",price:180,priceMax:230},
+  {id:"mnt_ray60",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Aluminyum Ray 60x40mm (mt)",price:240,priceMax:300},
+  {id:"mnt_kanca",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Cati Kankas - Kiremit",price:320,priceMax:420},
+  {id:"mnt_kancam",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Cati Kancasi - Metal Trapez",price:280,priceMax:380},
+  {id:"mnt_kancab",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Cati Kancasi - Beton",price:350,priceMax:460},
+  {id:"mnt_mid",group:"Montaj Sistemi",subgroup:"Baglanti Elemanlari",name:"Mid Clamp (adet)",price:55,priceMax:75},
+  {id:"mnt_end",group:"Montaj Sistemi",subgroup:"Baglanti Elemanlari",name:"End Clamp (adet)",price:65,priceMax:85},
+  {id:"mnt_tbolt",group:"Montaj Sistemi",subgroup:"Baglanti Elemanlari",name:"T-Bolt Set (10 adet)",price:120},
+  {id:"mnt_lbrkt",group:"Montaj Sistemi",subgroup:"Baglanti Elemanlari",name:"L-Braketi Seti",price:350,priceMax:500},
+  {id:"mnt_zemin",group:"Montaj Sistemi",subgroup:"Baglanti Elemanlari",name:"Zemin Montaj Seti (Panel basi)",price:1200,priceMax:1800},
+
+  // DC Kablo
+  {id:"dc4",group:"DC Kablo",subgroup:"Gunes Kablosu",name:"Gunes Kablosu 4mm² (mt)",price:28,priceMax:36},
+  {id:"dc6",group:"DC Kablo",subgroup:"Gunes Kablosu",name:"Gunes Kablosu 6mm² (mt)",price:42,priceMax:55},
+  {id:"dc10",group:"DC Kablo",subgroup:"Gunes Kablosu",name:"Gunes Kablosu 10mm² (mt)",price:68,priceMax:85},
+  {id:"mc4_cift",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"MC4 Konnektor Cifti",price:85,priceMax:120},
+  {id:"mc4_t2",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"MC4 T-Dallanma 1-2",price:180,priceMax:250},
+  {id:"mc4_t3",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"MC4 T-Dallanma 1-3",price:220,priceMax:300},
+
+  // AC Kablo
+  {id:"nyy25",group:"AC Kablo",name:"NYY 3x2.5mm² (mt)",price:65,priceMax:85},
+  {id:"nyy4",group:"AC Kablo",name:"NYY 3x4mm² (mt)",price:90,priceMax:115},
+  {id:"nyy6",group:"AC Kablo",name:"NYY 3x6mm² (mt)",price:130,priceMax:165},
+  {id:"nyy10",group:"AC Kablo",name:"NYY 3x10mm² (mt)",price:200,priceMax:260},
+  {id:"nyy16",group:"AC Kablo",name:"NYY 3x16mm² (mt)",price:320,priceMax:400},
+  {id:"nyy25a",group:"AC Kablo",name:"NYY 3x25mm² (mt)",price:480,priceMax:600},
+
+  // Koruma ve Elektrik
+  {id:"dcbox2",group:"Koruma ve Elektrik",subgroup:"DC Koruma",name:"DC Sigorta Kutusu 2 String",price:1800,priceMax:2500},
+  {id:"dcbox4",group:"Koruma ve Elektrik",subgroup:"DC Koruma",name:"DC Sigorta Kutusu 4 String",price:2800,priceMax:4000},
+  {id:"dcbox6",group:"Koruma ve Elektrik",subgroup:"DC Koruma",name:"DC Sigorta Kutusu 6 String",price:3800,priceMax:5500},
+  {id:"dcbox8",group:"Koruma ve Elektrik",subgroup:"DC Koruma",name:"DC Sigorta Kutusu 8 String",price:5000,priceMax:7000},
+  {id:"dcsig15",group:"Koruma ve Elektrik",subgroup:"DC Koruma",name:"DC Sigorta 15A",price:180},
+  {id:"dcsig20",group:"Koruma ve Elektrik",subgroup:"DC Koruma",name:"DC Sigorta 20A",price:200},
+  {id:"dcsig30",group:"Koruma ve Elektrik",subgroup:"DC Koruma",name:"DC Sigorta 30A",price:240},
+  {id:"dcspd",group:"Koruma ve Elektrik",subgroup:"DC Koruma",name:"DC Asiri Gerilim Koruyucu (SPD)",price:1200,priceMax:1800},
+  {id:"acsig16",group:"Koruma ve Elektrik",subgroup:"AC Koruma",name:"AC Sigorta 16A",price:280},
+  {id:"acsig25",group:"Koruma ve Elektrik",subgroup:"AC Koruma",name:"AC Sigorta 25A",price:320},
+  {id:"acsig32",group:"Koruma ve Elektrik",subgroup:"AC Koruma",name:"AC Sigorta 32A",price:380},
+  {id:"acsig40",group:"Koruma ve Elektrik",subgroup:"AC Koruma",name:"AC Sigorta 40A",price:450},
+  {id:"acsig63",group:"Koruma ve Elektrik",subgroup:"AC Koruma",name:"AC Sigorta 63A",price:580},
+  {id:"acspd",group:"Koruma ve Elektrik",subgroup:"AC Koruma",name:"AC Asiri Gerilim Koruyucu (SPD)",price:900,priceMax:1400},
+  {id:"ct",group:"Koruma ve Elektrik",subgroup:"Olcum",name:"Akim Trafosu (CT) 100A",price:1400,priceMax:2000},
+  {id:"sayac",group:"Koruma ve Elektrik",subgroup:"Olcum",name:"Dijital Enerji Sayaci",price:2500,priceMax:3500},
+  {id:"pano",group:"Koruma ve Elektrik",subgroup:"Olcum",name:"Elektrik Panosu (Uygun boy)",price:2800,priceMax:5000},
+
+  // Topraklama
+  {id:"tpk6",group:"Topraklama",name:"Topraklama Kablosu 6mm² (mt)",price:55,priceMax:75},
+  {id:"tpk10",group:"Topraklama",name:"Topraklama Kablosu 10mm² (mt)",price:80,priceMax:105},
+  {id:"tpc",group:"Topraklama",name:"Topraklama Cubugu 1.5m",price:850,priceMax:1200},
+  {id:"tpt",group:"Topraklama",name:"Topraklama Terminali Seti",price:350},
+
+  // Izleme
+  {id:"wifi_log",group:"Izleme / Monitoring",name:"Wi-Fi Data Logger",price:2500,priceMax:3800},
+  {id:"smart_meter",group:"Izleme / Monitoring",name:"Akilli Sayac / Enerji Izleme",price:3500,priceMax:5000},
+
+  // Kablo Kanali
+  {id:"kk4040",group:"Kablo Kanali",name:"Kablo Kanali 40x40mm (mt)",price:85,priceMax:110},
+  {id:"kk6040",group:"Kablo Kanali",name:"Kablo Kanali 60x40mm (mt)",price:120,priceMax:155},
+  {id:"kk10060",group:"Kablo Kanali",name:"Kablo Kanali 100x60mm (mt)",price:200,priceMax:260},
+  {id:"boru20",group:"Kablo Kanali",name:"Metal Boru 20mm (mt)",price:45,priceMax:65},
+  {id:"spiral",group:"Kablo Kanali",name:"Spiral Koruma Borusu (mt)",price:30,priceMax:45},
+  {id:"rakoru",group:"Kablo Kanali",name:"Kablo Rakoru Seti",price:280},
+
+  // Sarf Malzeme
+  {id:"sarf_bag",group:"Sarf Malzeme",name:"Kablo Bagi 100 Adet",price:120},
+  {id:"sarf_vida",group:"Sarf Malzeme",name:"Vida ve Somun Seti",price:280},
+  {id:"sarf_silikon",group:"Sarf Malzeme",name:"Silikon Macun (kartuş)",price:180},
+  {id:"sarf_bant",group:"Sarf Malzeme",name:"Izole Bant",price:60},
+  {id:"sarf_pasta",group:"Sarf Malzeme",name:"Kablo Pasta / Contalama",price:350},
+  {id:"sarf_etiket",group:"Sarf Malzeme",name:"Kablo Etiket Seti",price:150},
+
+  // Diger
+  {id:"nakliye",group:"Diger",name:"Nakliye / Benzin",price:1500}
+];
+
+const LABOR_RATE = 0.10;
+const LABOR_MIN = 8000;
+const CATALOG_VERSION = 1;
+
+// ============ CATALOG MANAGEMENT ============
+function getCatalog() {
+  const ver = localStorage.getItem('gesCatalogVersion');
+  if (ver && Number(ver) >= CATALOG_VERSION) {
+    const saved = localStorage.getItem('gesCatalog');
+    if (saved) return JSON.parse(saved);
+  }
+  localStorage.setItem('gesCatalog', JSON.stringify(DEFAULT_CATALOG));
+  localStorage.setItem('gesCatalogVersion', String(CATALOG_VERSION));
+  return JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+}
+
+function saveCatalog(catalog) {
+  localStorage.setItem('gesCatalog', JSON.stringify(catalog));
+}
+
+function getProduct(id) {
+  return getCatalog().find(p => p.id === id);
+}
+
+function getGroups() {
+  const catalog = getCatalog();
+  const groups = {};
+  catalog.forEach(p => {
+    if (!groups[p.group]) groups[p.group] = [];
+    groups[p.group].push(p);
+  });
+  return groups;
+}
+
+// ============ STATE ============
+let materials = [];
+let editingId = null;
+let viewingId = null;
+let openGroup = null;
+let openSubgroup = null;
+
+// ============ INIT ============
+document.getElementById('projectDate').value = new Date().toISOString().split('T')[0];
+addDefaultItems();
+renderProductGroups();
+renderHistory();
+calculate();
+updateMatCount();
+
+// ============ KWP ESTIMATE ============
+function calcKwp() {
+  let watt = 0;
+  materials.forEach(m => {
+    const p = getProduct(m.productId);
+    if (!p) return;
+    const nm = p.name.toLowerCase();
+    const match = nm.match(/(\d{3,4})\s*w\s*(monokristal|bifacial|panel)/);
+    if (match) watt += parseFloat(match[1]) * m.qty;
+  });
+  return watt / 1000;
+}
+
+function updateKwpDisplay() {
+  const kwp = calcKwp();
+  const el = document.getElementById('kwpDisplay');
+  if (kwp > 0) {
+    document.getElementById('kwpValue').textContent = kwp.toFixed(2) + ' kWp';
+    el.style.display = 'flex';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+// ============ PRODUCT GROUP BUTTONS ============
+function getGroupCounts() {
+  const counts = {};
+  materials.forEach(m => {
+    const p = getProduct(m.productId);
+    if (p) counts[p.group] = (counts[p.group] || 0) + m.qty;
+  });
+  return counts;
+}
+
+function getGroupAddedSummary(groupItems) {
+  let html = '';
+  groupItems.forEach(p => {
+    const entries = getProductEntries(p.id);
+    if (entries.length > 0) {
+      const isMetre = p.name.includes('(mt)');
+      entries.forEach(m => {
+        html += `<div style="display:flex;align-items:center;justify-content:space-between;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:6px;padding:4px 10px;margin:3px 0;font-size:.75rem">
+          <span style="font-weight:600;color:#2e7d32">${esc(p.name)}</span>
+          <span style="color:var(--text2)">${m.qty} ${isMetre ? 'mt' : 'ad'} x ${fmtMoney(m.price)}</span>
+          <span style="font-weight:700;color:#2e7d32">${fmtMoney(m.qty * m.price)}</span>
+          <button onclick="event.stopPropagation();removeMat(${materials.indexOf(m)})" style="background:#d93025;color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:.65rem;cursor:pointer;font-weight:700;margin-left:4px">Sil</button>
+        </div>`;
+      });
+    }
+  });
+  return html;
+}
+
+function renderProductGroups() {
+  const groups = getGroups();
+  const container = document.getElementById('productGroups');
+  const counts = getGroupCounts();
+  let html = '<div class="card"><div class="card-title">Malzeme Ekle</div><div class="product-groups">';
+
+  Object.keys(groups).forEach(g => {
+    const count = counts[g] || 0;
+    const isOpen = openGroup === g;
+    const safeName = g.replace(/'/g, "\\'");
+    html += `<button class="group-btn${isOpen ? ' open' : ''}" onclick="toggleGroup('${safeName}')">
+      ${esc(g)}${count > 0 ? ` <span style="background:${isOpen ? 'rgba(255,255,255,.9)' : 'var(--primary)'};color:${isOpen ? 'var(--primary)' : '#fff'};border-radius:50%;padding:1px 6px;font-size:.68rem;margin-left:2px;font-weight:700">${count}</span>` : ''}
+    </button>`;
+
+    if (isOpen) {
+      const items = groups[g];
+      const hasSubgroups = items.some(p => p.subgroup);
+      html += `<div style="width:100%;border:2px solid var(--primary);border-top:none;border-radius:0 0 8px 8px;padding:8px;margin:0 0 4px;background:#fff">`;
+
+      if (hasSubgroups) {
+        const subgroups = [...new Set(items.map(p => p.subgroup).filter(Boolean))];
+        if (!openSubgroup) {
+          subgroups.forEach(sg => {
+            const safeSg = sg.replace(/'/g, "\\'");
+            const sgItems = items.filter(p => p.subgroup === sg);
+            const sgCount = sgItems.reduce((s, p) => s + getProductEntries(p.id).length, 0);
+            html += `<button onclick="event.stopPropagation();selectSubgroup('${safeSg}')" style="width:100%;padding:8px 12px;margin-bottom:4px;background:#fff8f0;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--primary);display:flex;justify-content:space-between;align-items:center">
+              <span>${esc(sg)}</span>
+              <span style="display:flex;align-items:center;gap:6px">
+                ${sgCount > 0 ? '<span style="background:#2e7d32;color:#fff;border-radius:10px;padding:1px 7px;font-size:.68rem">' + sgCount + '</span>' : ''}
+                <span style="font-size:.7rem;color:var(--text2)">&#9654;</span>
+              </span>
+            </button>`;
+          });
+        } else {
+          html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <button onclick="event.stopPropagation();openSubgroup=null;renderProductGroups()" style="background:var(--primary);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;font-weight:600">&#9664; Geri</button>
+            <span style="font-weight:600;font-size:.85rem;color:var(--primary)">${esc(openSubgroup)}</span>
+          </div>`;
+          items.filter(p => p.subgroup === openSubgroup).forEach(p => { html += buildProductRow(p); });
+        }
+      } else {
+        items.forEach(p => { html += buildProductRow(p); });
+      }
+
+      html += '</div>';
+    } else {
+      const added = getGroupAddedSummary(groups[g]);
+      if (added) {
+        html += `<div style="flex-basis:100%;width:100%;padding:2px 0 4px">${added}</div>`;
+      }
+    }
+  });
+
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+function toggleGroup(group) {
+  openGroup = openGroup === group ? null : group;
+  openSubgroup = null;
+  renderProductGroups();
+}
+
+function selectSubgroup(sg) {
+  openSubgroup = sg;
+  renderProductGroups();
+}
+
+function getProductEntries(productId) {
+  return materials.filter(m => m.productId === productId);
+}
+
+function buildProductRow(p) {
+  const isMetre = p.name.includes('(mt)');
+  const qtyLabel = isMetre ? 'Metre' : 'Adet';
+  let rangeHint = '';
+  if (p.priceMax) rangeHint = `<span style="font-size:.65rem;color:var(--text2);margin-left:4px">(${fmtMoney(p.price)} - ${fmtMoney(p.priceMax)})</span>`;
+  const entries = getProductEntries(p.id);
+  const hasEntries = entries.length > 0;
+
+  let html = `<div style="padding:6px 8px;margin-bottom:4px;border-radius:8px;${hasEntries ? 'background:#e8f5e9;border:1px solid #a5d6a7;' : 'background:#f8f9fa;'}">
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <span style="font-weight:500;font-size:.82rem;flex:1;min-width:100px">${esc(p.name)}${rangeHint}</span>
+      <div style="display:flex;gap:4px;align-items:center">
+        <input type="number" id="qty_${p.id}" value="1" min="0" style="width:50px;padding:4px;border:1.5px solid var(--border);border-radius:6px;font-size:.8rem;text-align:center" onclick="event.stopPropagation()" placeholder="${qtyLabel}">
+        <span style="font-size:.65rem;color:var(--text2)">${qtyLabel}</span>
+      </div>
+      <div style="display:flex;gap:4px;align-items:center">
+        <input type="number" id="prc_${p.id}" value="${p.price}" min="0" step="0.1" style="width:80px;padding:4px;border:1.5px solid var(--border);border-radius:6px;font-size:.8rem;text-align:center" onclick="event.stopPropagation()">
+        <span style="font-size:.65rem;color:var(--text2)">TL</span>
+      </div>
+      <button class="btn btn-success btn-sm" onclick="event.stopPropagation();addProductWithQty('${p.id}')" style="padding:4px 12px;font-size:.75rem">Ekle</button>
+    </div>`;
+
+  if (hasEntries) {
+    entries.forEach(m => {
+      const idx = materials.indexOf(m);
+      html += `<div style="display:flex;gap:6px;align-items:center;margin-top:4px;padding:4px 6px;background:rgba(255,255,255,.7);border-radius:6px;font-size:.78rem;flex-wrap:wrap">
+        <div style="display:flex;gap:4px;align-items:center">
+          <input type="number" value="${m.qty}" min="0" style="width:45px;padding:3px;border:1.5px solid #a5d6a7;border-radius:4px;font-size:.78rem;text-align:center" onchange="updateMat(${idx},'qty',this.value)" onclick="event.stopPropagation()">
+          <span style="font-size:.65rem;color:var(--text2)">${isMetre ? 'mt' : 'ad'}</span>
+        </div>
+        <span style="color:var(--text2);font-size:.7rem">x</span>
+        <div style="display:flex;gap:4px;align-items:center">
+          <input type="number" value="${m.price}" min="0" step="0.1" style="width:75px;padding:3px;border:1.5px solid #a5d6a7;border-radius:4px;font-size:.78rem;text-align:center" onchange="updateMat(${idx},'price',this.value)" onclick="event.stopPropagation()">
+          <span style="font-size:.65rem;color:var(--text2)">TL</span>
+        </div>
+        <span style="color:#2e7d32;font-weight:700;font-size:.78rem;margin-left:auto">= ${fmtMoney(m.qty * m.price)}</span>
+        <button onclick="removeMat(${idx})" style="background:#d93025;color:#fff;border:none;border-radius:4px;padding:2px 8px;font-size:.7rem;cursor:pointer;font-weight:600">Sil</button>
+      </div>`;
+    });
+  }
+
+  html += '</div>';
+  return html;
+}
+
+// ============ ADD PRODUCT ============
+function addProductWithQty(productId) {
+  const p = getProduct(productId);
+  if (!p) return;
+  const qtyEl = document.getElementById('qty_' + productId);
+  const prcEl = document.getElementById('prc_' + productId);
+  const qty = parseFloat(qtyEl ? qtyEl.value : 1) || 1;
+  const price = parseFloat(prcEl ? prcEl.value : p.price) || p.price;
+  materials.unshift({
+    uid: Date.now() + Math.random(),
+    productId: p.id,
+    name: p.group + ' - ' + p.name,
+    qty: qty,
+    price: price,
+    priceMax: p.priceMax || null
+  });
+  showToast(p.name + ' eklendi!', 'success');
+  renderProductGroups();
+  calculate();
+}
+
+// ============ MATERIAL LIST MODAL ============
+function showMaterialList() {
+  const body = document.getElementById('matListBody');
+  if (materials.length === 0) {
+    body.innerHTML = '<p class="text-muted" style="text-align:center;padding:20px">Henuz malzeme eklenmedi.</p>';
+    document.getElementById('matListSum').textContent = '0 TL';
+    document.getElementById('matListModal').classList.add('show');
+    return;
+  }
+
+  let total = 0;
+  body.innerHTML = materials.map((m, i) => {
+    const isMetre = m.name.includes('(mt)');
+    const rowTotal = m.qty * m.price;
+    total += rowTotal;
+    return `<div style="display:flex;gap:6px;align-items:center;padding:8px;margin-bottom:4px;background:#f8f9fa;border-radius:8px;flex-wrap:wrap;${rowTotal > 0 ? '' : 'opacity:.5'}">
+      <div style="flex:2;min-width:120px;font-weight:500;font-size:.82rem">${esc(m.name)}</div>
+      <div style="display:flex;gap:4px;align-items:center">
+        <input type="number" value="${m.qty}" min="0" style="width:50px;padding:4px;border:1.5px solid var(--border);border-radius:5px;font-size:.8rem;text-align:center" onchange="updateMatFromList(${i},'qty',this.value)">
+        <span style="font-size:.65rem;color:var(--text2)">${isMetre ? 'mt' : 'ad'}</span>
+      </div>
+      <span style="font-size:.7rem;color:var(--text2)">x</span>
+      <div style="display:flex;gap:4px;align-items:center">
+        <input type="number" value="${m.price}" min="0" step="0.1" style="width:75px;padding:4px;border:1.5px solid var(--border);border-radius:5px;font-size:.8rem;text-align:center" onchange="updateMatFromList(${i},'price',this.value)">
+        <span style="font-size:.65rem;color:var(--text2)">TL</span>
+      </div>
+      <div style="font-weight:700;font-size:.82rem;color:var(--primary);min-width:80px;text-align:right">${fmtMoney(rowTotal)}</div>
+      <button onclick="removeMatFromList(${i})" style="background:#d93025;color:#fff;border:none;border-radius:5px;padding:4px 8px;font-size:.72rem;cursor:pointer;font-weight:600">Sil</button>
+    </div>`;
+  }).join('');
+
+  document.getElementById('matListSum').textContent = fmtMoney(total);
+  document.getElementById('matListModal').classList.add('show');
+}
+
+function closeMatList() {
+  document.getElementById('matListModal').classList.remove('show');
+}
+
+function updateMatFromList(idx, field, val) {
+  if (field === 'qty') materials[idx].qty = parseFloat(val) || 0;
+  if (field === 'price') materials[idx].price = parseFloat(val) || 0;
+  const total = materials.reduce((s, m) => s + m.qty * m.price, 0);
+  document.getElementById('matListSum').textContent = fmtMoney(total);
+  updateMatCount();
+  calculate();
+}
+
+function removeMatFromList(idx) {
+  materials.splice(idx, 1);
+  showMaterialList();
+  renderProductGroups();
+  calculate();
+}
+
+function updateMatCount() {
+  document.getElementById('matCount').textContent = materials.length;
+}
+
+function updateMat(idx, field, val) {
+  if (field === 'qty') materials[idx].qty = parseFloat(val) || 0;
+  if (field === 'price') materials[idx].price = parseFloat(val) || 0;
+  renderProductGroups();
+  calculate();
+}
+
+function removeMat(idx) {
+  materials.splice(idx, 1);
+  renderProductGroups();
+  calculate();
+}
+
+// ============ CALCULATE ============
+function calculate() {
+  const matTotal = materials.reduce((s, m) => s + m.qty * m.price, 0);
+  const laborCalc = matTotal * LABOR_RATE;
+  const laborTotal = Math.max(laborCalc, matTotal > 0 ? LABOR_MIN : 0);
+  const cost = matTotal + laborTotal;
+  const offer = parseFloat(document.getElementById('offerPrice').value) || 0;
+  const profit = offer - cost;
+  const margin = offer > 0 ? ((profit / offer) * 100).toFixed(1) : 0;
+
+  document.getElementById('labMatSum').textContent = fmtMoney(matTotal);
+  document.getElementById('labCalc').textContent = fmtMoney(laborCalc);
+  document.getElementById('labTotal').textContent = fmtMoney(laborTotal);
+
+  document.getElementById('sumMat').textContent = fmtMoney(matTotal);
+  document.getElementById('sumLab').textContent = fmtMoney(laborTotal);
+  document.getElementById('sumCost').textContent = fmtMoney(cost);
+  document.getElementById('sumOffer').textContent = fmtMoney(offer);
+  document.getElementById('sumProfit').textContent = fmtMoney(profit);
+  document.getElementById('sumProfit').className = profit >= 0 ? 'profit-pos' : 'profit-neg';
+  document.getElementById('sumMargin').textContent = '%' + margin;
+  updateMatCount();
+  updateKwpDisplay();
+}
+
+// ============ SAVE / LOAD ============
+function getFormData() {
+  const matTotal = materials.reduce((s, m) => s + m.qty * m.price, 0);
+  const laborCalc = matTotal * LABOR_RATE;
+  const laborTotal = Math.max(laborCalc, matTotal > 0 ? LABOR_MIN : 0);
+  const offer = parseFloat(document.getElementById('offerPrice').value) || 0;
+  const cost = matTotal + laborTotal;
+  return {
+    id: editingId || Date.now(),
+    customer: document.getElementById('customerName').value,
+    date: document.getElementById('projectDate').value,
+    systemType: document.getElementById('systemType').value,
+    installLocation: document.getElementById('installLocation').value,
+    note: document.getElementById('projectNote').value,
+    materials: materials.map(m => ({...m})),
+    matTotal, laborTotal, offer, cost,
+    profit: offer - cost,
+    kwp: calcKwp()
+  };
+}
+
+function saveProject() {
+  const data = getFormData();
+  if (!data.customer) { showToast('Musteri adi girin!', 'error'); return; }
+  let projects = JSON.parse(localStorage.getItem('gesProjects') || '[]');
+  if (editingId) {
+    const idx = projects.findIndex(p => p.id === editingId);
+    if (idx >= 0) projects[idx] = data; else projects.unshift(data);
+    editingId = null;
+  } else {
+    projects.unshift(data);
+  }
+  localStorage.setItem('gesProjects', JSON.stringify(projects));
+  showToast('Proje kaydedildi!', 'success');
+  resetForm();
+  renderHistory();
+}
+
+function resetForm() {
+  editingId = null;
+  document.getElementById('customerName').value = '';
+  document.getElementById('projectDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('systemType').value = '';
+  document.getElementById('installLocation').value = '';
+  document.getElementById('projectNote').value = '';
+  document.getElementById('offerPrice').value = '';
+  materials = [];
+  addDefaultItems();
+  renderProductGroups();
+  calculate();
+}
+
+function addDefaultItems() {
+  const nakliye = getProduct('nakliye');
+  if (nakliye) {
+    materials.push({
+      uid: Date.now() + Math.random(),
+      productId: nakliye.id,
+      name: nakliye.group + ' - ' + nakliye.name,
+      qty: 1,
+      price: nakliye.price,
+      priceMax: null
+    });
+  }
+}
+
+function newCustomer() {
+  if (materials.length > 1 || document.getElementById('customerName').value) {
+    if (!confirm('Mevcut formu temizleyip yeni musteriye gecmek istiyor musunuz?')) return;
+  }
+  resetForm();
+}
+
+function clearMaterials() {
+  if (materials.length === 0) return;
+  if (!confirm('Tum malzemeleri temizlemek istiyor musunuz?')) return;
+  materials = [];
+  renderProductGroups();
+  calculate();
+}
+
+function editFromHistory(id) {
+  const projects = JSON.parse(localStorage.getItem('gesProjects') || '[]');
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  if (materials.length > 1 || document.getElementById('customerName').value) {
+    if (!confirm('Mevcut formu temizleyip bu projeyi duzenlemek istiyor musunuz?')) return;
+  }
+  editingId = p.id;
+  document.getElementById('customerName').value = p.customer;
+  document.getElementById('projectDate').value = p.date;
+  document.getElementById('systemType').value = p.systemType || '';
+  document.getElementById('installLocation').value = p.installLocation || '';
+  document.getElementById('projectNote').value = p.note || '';
+  document.getElementById('offerPrice').value = p.offer || '';
+  materials = (p.materials || []).map(m => ({...m}));
+  renderProductGroups();
+  calculate();
+  switchTab('calc');
+}
+
+function deleteFromHistory(id) {
+  if (!confirm('Bu projeyi silmek istediginize emin misiniz?')) return;
+  let projects = JSON.parse(localStorage.getItem('gesProjects') || '[]');
+  projects = projects.filter(p => p.id !== id);
+  localStorage.setItem('gesProjects', JSON.stringify(projects));
+  renderHistory();
+}
+
+// ============ HISTORY ============
+function renderHistory() {
+  const projects = JSON.parse(localStorage.getItem('gesProjects') || '[]');
+  const c = document.getElementById('historyList');
+  if (!projects.length) {
+    c.innerHTML = '<div class="empty-state"><span>&#9728;</span><p>Henuz kayitli proje yok.</p></div>';
+    return;
+  }
+  c.innerHTML = projects.map(p => {
+    const tags = [p.systemType, p.installLocation].filter(Boolean).map(t => `<span class="sys-tag">${esc(t)}</span>`).join('');
+    const kwpStr = p.kwp > 0 ? `<span class="sys-tag" style="background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7">${p.kwp.toFixed(2)} kWp</span>` : '';
+    return `
+    <div class="history-item">
+      <div class="history-header" onclick="showDetail(${p.id})" style="cursor:pointer">
+        <span class="history-customer">${esc(p.customer)}</span>
+        <span class="history-date">${p.date}</span>
+      </div>
+      ${tags || kwpStr ? `<div style="margin-bottom:6px">${tags}${kwpStr}</div>` : ''}
+      <div class="history-details" onclick="showDetail(${p.id})" style="cursor:pointer">
+        <span>Maliyet: ${fmtMoney(p.cost)}</span>
+        <span>Teklif: ${fmtMoney(p.offer)}</span>
+        <span class="badge ${p.profit>=0?'badge-s':'badge-d'}">Kar: ${fmtMoney(p.profit)}</span>
+      </div>
+      <div class="history-actions">
+        <button class="btn btn-primary btn-sm" onclick="editFromHistory(${p.id})">Duzenle</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteFromHistory(${p.id})">Sil</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showDetail(id) {
+  viewingId = id;
+  const projects = JSON.parse(localStorage.getItem('gesProjects') || '[]');
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modalTitle').textContent = p.customer;
+
+  let h = `<p class="text-muted">${p.date}</p>`;
+  if (p.systemType || p.installLocation) {
+    h += `<p style="margin:6px 0">`;
+    if (p.systemType) h += `<span class="sys-tag">${esc(p.systemType)}</span> `;
+    if (p.installLocation) h += `<span class="sys-tag">${esc(p.installLocation)}</span>`;
+    if (p.kwp > 0) h += ` <span class="sys-tag" style="background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7">${p.kwp.toFixed(2)} kWp</span>`;
+    h += `</p>`;
+  }
+  if (p.note) h += `<p style="margin:6px 0;font-size:.85rem">${esc(p.note)}</p>`;
+  h += '<hr style="margin:10px 0"><strong style="font-size:.85rem">Malzemeler</strong>';
+  if (p.materials && p.materials.length) {
+    h += '<table style="width:100%;font-size:.8rem;margin:6px 0;border-collapse:collapse">';
+    p.materials.forEach(m => {
+      h += `<tr><td style="padding:3px 0;padding-right:8px">${esc(m.name)}</td><td style="text-align:right;white-space:nowrap">${m.qty} x ${fmtMoney(m.price)}</td><td style="text-align:right;font-weight:700;white-space:nowrap"><b>${fmtMoney(m.qty*m.price)}</b></td></tr>`;
+    });
+    h += '</table>';
+  }
+  const margin = p.offer > 0 ? ((p.profit/p.offer)*100).toFixed(1) : 0;
+  h += `<hr style="margin:10px 0">
+    <div style="display:flex;justify-content:space-between;font-size:.85rem;padding:3px 0"><span>Malzeme</span><b>${fmtMoney(p.matTotal)}</b></div>
+    <div style="display:flex;justify-content:space-between;font-size:.85rem;padding:3px 0"><span>Kurulum Isciligi</span><b>${fmtMoney(p.laborTotal)}</b></div>
+    <div style="display:flex;justify-content:space-between;font-size:.85rem;padding:3px 0"><span>Toplam Maliyet</span><b>${fmtMoney(p.cost)}</b></div>
+    <div style="display:flex;justify-content:space-between;font-size:.85rem;padding:3px 0"><span>Teklif</span><b>${fmtMoney(p.offer)}</b></div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:1.05rem">
+      <span>KAR</span><b style="color:${p.profit>=0?'#2e7d32':'#d93025'}">${fmtMoney(p.profit)} (%${margin})</b>
+    </div>`;
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modalDeleteBtn').onclick = () => deleteProject(id);
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function closeModal() { document.getElementById('detailModal').classList.remove('show'); viewingId = null; }
+
+function deleteProject(id) {
+  if (!confirm('Silmek istediginize emin misiniz?')) return;
+  let p = JSON.parse(localStorage.getItem('gesProjects') || '[]');
+  p = p.filter(x => x.id !== id);
+  localStorage.setItem('gesProjects', JSON.stringify(p));
+  closeModal(); renderHistory();
+}
+
+function loadToEditor() {
+  const projects = JSON.parse(localStorage.getItem('gesProjects') || '[]');
+  const p = projects.find(x => x.id === viewingId);
+  if (!p) return;
+  editingId = p.id;
+  document.getElementById('customerName').value = p.customer;
+  document.getElementById('projectDate').value = p.date;
+  document.getElementById('systemType').value = p.systemType || '';
+  document.getElementById('installLocation').value = p.installLocation || '';
+  document.getElementById('projectNote').value = p.note || '';
+  document.getElementById('offerPrice').value = p.offer || '';
+  materials = (p.materials || []).map(m => ({...m}));
+  renderProductGroups();
+  calculate();
+  closeModal();
+  switchTab('calc');
+}
+
+// ============ PRICE EDITOR TAB ============
+function renderPriceEditor() {
+  const groups = getGroups();
+  const container = document.getElementById('priceEditor');
+  let html = '';
+  Object.keys(groups).forEach(g => {
+    html += `<div class="price-group">
+      <div class="price-group-header" onclick="togglePriceGroup(this)">
+        <span>${esc(g)} (${groups[g].length})</span>
+        <span class="arrow">&#9660;</span>
+      </div>
+      <div class="price-group-body">`;
+    groups[g].forEach(p => {
+      html += `<div class="price-row">
+        <span class="pr-name">${esc(p.name)}</span>
+        <div>
+          <span class="pr-label">Fiyat</span>
+          <input type="number" value="${p.price}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','price',this.value)">
+        </div>`;
+      if (p.priceMax !== undefined && p.priceMax !== null) {
+        html += `<div>
+          <span class="pr-label">Max</span>
+          <input type="number" value="${p.priceMax}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','priceMax',this.value)">
+        </div>`;
+      }
+      html += `<button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${p.id}')" title="Sil" style="padding:4px 8px">X</button>
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function togglePriceGroup(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('show');
+}
+
+function updateCatalogPrice(id, field, val) {
+  const catalog = getCatalog();
+  const item = catalog.find(p => p.id === id);
+  if (!item) return;
+  item[field] = parseFloat(val) || 0;
+  saveCatalog(catalog);
+}
+
+function deleteCatalogItem(id) {
+  if (!confirm('Bu urunu katalogdan silmek istiyor musunuz?')) return;
+  let catalog = getCatalog();
+  catalog = catalog.filter(p => p.id !== id);
+  saveCatalog(catalog);
+  renderPriceEditor();
+  renderProductGroups();
+}
+
+function addNewProduct() {
+  const group = document.getElementById('newGroup').value.trim();
+  const name = document.getElementById('newName').value.trim();
+  const price = parseFloat(document.getElementById('newPrice').value) || 0;
+  const priceMax = parseFloat(document.getElementById('newPriceMax').value) || null;
+
+  if (!group || !name) { showToast('Grup ve urun adi girin!', 'error'); return; }
+  if (price <= 0) { showToast('Fiyat girin!', 'error'); return; }
+
+  const catalog = getCatalog();
+  const newItem = { id: 'custom_' + Date.now(), group, name, price };
+  if (priceMax && priceMax > price) newItem.priceMax = priceMax;
+  catalog.push(newItem);
+  saveCatalog(catalog);
+
+  document.getElementById('newGroup').value = '';
+  document.getElementById('newName').value = '';
+  document.getElementById('newPrice').value = '';
+  document.getElementById('newPriceMax').value = '';
+
+  renderPriceEditor();
+  renderProductGroups();
+  showToast('Urun eklendi!', 'success');
+}
+
+// ============ TABS ============
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const names = ['calc','history','prices'];
+    t.classList.toggle('active', names[i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'history') renderHistory();
+  if (name === 'prices') renderPriceEditor();
+}
+
+// ============ UTILS ============
+function fmtMoney(v) { return v.toLocaleString('tr-TR', {minimumFractionDigits:0, maximumFractionDigits:2}) + ' TL'; }
+
+function showToast(msg, type) {
+  type = type || 'info';
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast toast-' + type + ' show';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.classList.remove('show'); }, 2500);
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+document.getElementById('detailModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+document.getElementById('matListModal').addEventListener('click', function(e) { if (e.target === this) closeMatList(); });
+
+// ============ PWA ============
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('installBtn').style.display = 'flex';
+});
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('installBtn').style.display = 'none'; });
+}
+</script>
+</body>
+</html>
