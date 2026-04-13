@@ -526,6 +526,7 @@ renderProductGroups();
 renderHistory();
 calculate();
 updateMatCount();
+autoUpdatePricesIfStale();
 
 // ============ KWP ESTIMATE ============
 function calcKwp() {
@@ -1130,6 +1131,32 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s; re
 document.getElementById('detailModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 document.getElementById('matListModal').addEventListener('click', function(e) { if (e.target === this) closeMatList(); });
 
+// ============ OTOMATİK FİYAT GÜNCELLEME ============
+async function autoUpdatePricesIfStale() {
+  const INTERVAL_HOURS = 24;
+  const lastUpdate = localStorage.getItem('gesPriceLastUpdate');
+  const gistUrl = localStorage.getItem('gesGistUrl');
+
+  // Gist URL yoksa telefon kurulmamış, atla
+  if (!gistUrl) return;
+
+  // Son güncellemeden bu yana INTERVAL_HOURS geçmişse güncelle
+  if (lastUpdate) {
+    const hoursPassed = (Date.now() - Number(lastUpdate)) / (1000 * 60 * 60);
+    if (hoursPassed < INTERVAL_HOURS) return;
+  }
+
+  // Sessizce güncelle (arka planda, bildirim yok)
+  try {
+    const data = await fetch(gistUrl + '?t=' + Date.now()).then(r => r.json());
+    if (data.prices && data.prices.length) {
+      applyScrapedPrices(data.prices);
+      localStorage.setItem('gesPriceLastUpdate', String(Date.now()));
+      showToast('Fiyatlar otomatik guncellendi', 'info');
+    }
+  } catch {}
+}
+
 // ============ WEB FİYAT GÜNCELLEME ============
 const SERVER = 'http://localhost:3131';
 let isServerAvailable = false;
@@ -1275,6 +1302,7 @@ async function updatePricesFromWeb() {
     try {
       const data = await fetch(gistUrl + '?t=' + Date.now()).then(r => r.json());
       const updated = applyScrapedPrices(data.prices || []);
+      localStorage.setItem('gesPriceLastUpdate', String(Date.now()));
       progress.style.display = 'none';
       result.style.display = 'block';
       result.style.background = '#e8f5e9';
