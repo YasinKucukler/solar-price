@@ -1180,7 +1180,7 @@ function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   if (name === 'history') renderHistory();
-  if (name === 'prices') renderPriceEditor();
+  if (name === 'prices') { renderPriceEditor(); initWebUpdate(); }
 }
 
 // ============ UTILS ============
