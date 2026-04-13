@@ -469,10 +469,13 @@ const DEFAULT_CATALOG = [
   // Sarf Malzeme
   {id:"sarf_bag",group:"Sarf Malzeme",name:"Kablo Bagi 100 Adet",price:120},
   {id:"sarf_vida",group:"Sarf Malzeme",name:"Vida ve Somun Seti",price:280},
-  {id:"sarf_silikon",group:"Sarf Malzeme",name:"Silikon Macun (kartuş)",price:180},
+  {id:"sarf_silikon",group:"Sarf Malzeme",name:"Silikon Macun (kartus)",price:180},
   {id:"sarf_bant",group:"Sarf Malzeme",name:"Izole Bant",price:60},
   {id:"sarf_pasta",group:"Sarf Malzeme",name:"Kablo Pasta / Contalama",price:350},
   {id:"sarf_etiket",group:"Sarf Malzeme",name:"Kablo Etiket Seti",price:150},
+  {id:"sarf_boya1",group:"Sarf Malzeme",name:"Kirmizi Boya 1 kg",price:350,priceMax:500},
+  {id:"sarf_boya25",group:"Sarf Malzeme",name:"Kirmizi Boya 2.5 kg",price:750,priceMax:1000},
+  {id:"sarf_boya5",group:"Sarf Malzeme",name:"Kirmizi Boya 5 kg",price:1300,priceMax:1800},
 
   // Diger
   {id:"nakliye",group:"Diger",name:"Nakliye / Benzin",price:1500}
@@ -1214,6 +1217,8 @@ function savePhoneGistUrl() {
   showToast('URL kaydedildi!', 'success');
 }
 
+const PRICE_MARKUP = 1.25; // %25 kar marjı
+
 function applyScrapedPrices(prices) {
   const catalog = getCatalog();
   let updated = 0;
@@ -1221,8 +1226,8 @@ function applyScrapedPrices(prices) {
     if (!price) return;
     const item = catalog.find(p => p.id === id);
     if (item) {
-      item.price = price;
-      if (priceMax) item.priceMax = priceMax;
+      item.price = Math.round(price * PRICE_MARKUP);
+      if (priceMax) item.priceMax = Math.round(priceMax * PRICE_MARKUP);
       updated++;
     }
   });
