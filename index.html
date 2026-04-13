@@ -1074,8 +1074,22 @@ function loadToEditor() {
 }
 
 // ============ PRICE EDITOR TAB ============
+// ─── Fiyat Kilitleme ─────────────────────────────────────────────────────────
+function getLockedPrices() {
+  return new Set(JSON.parse(localStorage.getItem('gesPriceLocks') || '[]'));
+}
+
+function togglePriceLock(id) {
+  const locks = getLockedPrices();
+  locks.has(id) ? locks.delete(id) : locks.add(id);
+  localStorage.setItem('gesPriceLocks', JSON.stringify([...locks]));
+  renderPriceEditor();
+  showToast(locks.has(id) ? 'Fiyat kilitledi' : 'Kilit kaldirildi', 'info');
+}
+
 function renderPriceEditor() {
   const groups = getGroups();
+  const locks = getLockedPrices();
   const container = document.getElementById('priceEditor');
   let html = '';
   Object.keys(groups).forEach(g => {
@@ -1086,19 +1100,22 @@ function renderPriceEditor() {
       </div>
       <div class="price-group-body">`;
     groups[g].forEach(p => {
-      html += `<div class="price-row">
+      const locked = locks.has(p.id);
+      html += `<div class="price-row" style="${locked ? 'background:#fff8e1;border-radius:8px;' : ''}">
         <span class="pr-name">${esc(p.name)}</span>
         <div class="pr-field">
           <span class="pr-label">Fiyat</span>
-          <input type="number" value="${p.price}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','price',this.value)">
+          <input type="number" value="${p.price}" min="0" step="0.1" ${locked ? 'disabled style="opacity:.6"' : ''} onchange="updateCatalogPrice('${p.id}','price',this.value)">
         </div>`;
       if (p.priceMax !== undefined && p.priceMax !== null) {
         html += `<div class="pr-field">
           <span class="pr-label">Max</span>
-          <input type="number" value="${p.priceMax}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','priceMax',this.value)">
+          <input type="number" value="${p.priceMax}" min="0" step="0.1" ${locked ? 'disabled style="opacity:.6"' : ''} onchange="updateCatalogPrice('${p.id}','priceMax',this.value)">
         </div>`;
       }
-      html += `<button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${p.id}')">Sil</button>
+      html += `<button onclick="togglePriceLock('${p.id}')" title="${locked ? 'Kilidi kaldir' : 'Fiyati kilitle'}"
+        style="background:${locked ? '#f57c00' : '#e0e0e0'};color:${locked ? '#fff' : '#616161'};border:none;border-radius:8px;padding:8px 10px;font-size:1rem;cursor:pointer;min-height:44px">${locked ? '&#128274;' : '&#128275;'}</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${p.id}')">Sil</button>
       </div>`;
     });
     html += '</div></div>';
@@ -1270,9 +1287,12 @@ const PRICE_MARKUP = 1.25; // %25 kar marjı
 
 function applyScrapedPrices(prices) {
   const catalog = getCatalog();
+  const locks = getLockedPrices();
   let updated = 0;
+  let skipped = 0;
   prices.forEach(({ id, price, priceMax }) => {
     if (!price) return;
+    if (locks.has(id)) { skipped++; return; }
     const item = catalog.find(p => p.id === id);
     if (item) {
       item.price = Math.round(price * PRICE_MARKUP);
@@ -1282,6 +1302,7 @@ function applyScrapedPrices(prices) {
   });
   saveCatalog(catalog);
   renderPriceEditor();
+  if (skipped > 0) showToast(`${updated} guncellendi, ${skipped} kilitli atildi`, 'info');
   return updated;
 }
 
