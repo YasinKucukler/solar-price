@@ -402,6 +402,7 @@ const DEFAULT_CATALOG = [
   {id:"bat_a200g",group:"Aku / Batarya",subgroup:"AGM / Gel",name:"Gel 200Ah 12V",price:12000,priceMax:15000},
 
   // Montaj Sistemi
+  {id:"mnt_demir60",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Demir Profil 60x60mm 6mt",price:950,priceMax:1400},
   {id:"mnt_ray",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Aluminyum Ray 40x40mm (mt)",price:180,priceMax:230},
   {id:"mnt_ray60",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Aluminyum Ray 60x40mm (mt)",price:240,priceMax:300},
   {id:"mnt_kanca",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Cati Kankas - Kiremit",price:320,priceMax:420},
@@ -473,6 +474,7 @@ const DEFAULT_CATALOG = [
   {id:"sarf_bant",group:"Sarf Malzeme",name:"Izole Bant",price:60},
   {id:"sarf_pasta",group:"Sarf Malzeme",name:"Kablo Pasta / Contalama",price:350},
   {id:"sarf_etiket",group:"Sarf Malzeme",name:"Kablo Etiket Seti",price:150},
+  {id:"sarf_kelepce",group:"Sarf Malzeme",name:"Plastik Kelepce (paket)",price:180,priceMax:250},
   {id:"sarf_boya1",group:"Sarf Malzeme",name:"Kirmizi Boya 1 kg",price:350,priceMax:500},
   {id:"sarf_boya25",group:"Sarf Malzeme",name:"Kirmizi Boya 2.5 kg",price:750,priceMax:1000},
   {id:"sarf_boya5",group:"Sarf Malzeme",name:"Kirmizi Boya 5 kg",price:1300,priceMax:1800},
@@ -793,8 +795,55 @@ function removeMat(idx) {
   calculate();
 }
 
+// ============ OTOMATİK SARF MALZEME ============
+// Her 4 panelde bir adet: plastik kelepçe + izole bant
+const AUTO_CONSUMABLES = [
+  { productId: 'sarf_kelepce', perPanels: 4 },
+  { productId: 'sarf_bant',   perPanels: 4 },
+];
+
+function countPanels() {
+  return materials.reduce((sum, m) => {
+    const p = getProduct(m.productId);
+    return sum + (p && p.group === 'Gunes Paneli' ? (m.qty || 1) : 0);
+  }, 0);
+}
+
+function autoAddConsumables() {
+  const panelCount = countPanels();
+  let changed = false;
+
+  AUTO_CONSUMABLES.forEach(rule => {
+    const needed = panelCount > 0 ? Math.ceil(panelCount / rule.perPanels) : 0;
+    const idx = materials.findIndex(m => m.productId === rule.productId && m._auto);
+
+    if (needed === 0) {
+      if (idx !== -1) { materials.splice(idx, 1); changed = true; }
+    } else if (idx !== -1) {
+      if (materials[idx].qty !== needed) { materials[idx].qty = needed; changed = true; }
+    } else {
+      const p = getProduct(rule.productId);
+      if (p) {
+        materials.push({
+          uid: 'auto_' + rule.productId,
+          productId: p.id,
+          name: p.group + ' - ' + p.name + ' [Otomatik]',
+          qty: needed,
+          price: p.price,
+          priceMax: p.priceMax || null,
+          _auto: true,
+        });
+        changed = true;
+      }
+    }
+  });
+
+  return changed;
+}
+
 // ============ CALCULATE ============
 function calculate() {
+  if (autoAddConsumables()) renderProductGroups();
   const matTotal = materials.reduce((s, m) => s + m.qty * m.price, 0);
   const laborCalc = matTotal * LABOR_RATE;
   const laborTotal = Math.max(laborCalc, matTotal > 0 ? LABOR_MIN : 0);
