@@ -262,6 +262,62 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
 
   <!-- PRICES TAB -->
   <div id="tab-prices" class="tab-content">
+
+    <!-- Web Fiyat Güncelleme Kartı -->
+    <div class="card" id="webUpdateCard">
+      <div class="card-title">Web'den Fiyat Guncelle</div>
+      <p class="text-muted mb8">Trendyol, Hepsiburada ve Amazon'dan guncel fiyatlari ceker.</p>
+
+      <!-- PC ayarları (sunucu varken görünür) -->
+      <div id="pcSetupSection" style="display:none">
+        <div id="pcNotConfigured">
+          <div class="form-group">
+            <label>GitHub Personal Access Token <span style="font-size:.75rem;color:var(--text2)">(gist yetkisi)</span></label>
+            <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx" style="font-size:16px">
+          </div>
+          <div class="form-group">
+            <label>Gist ID <span style="font-size:.75rem;color:var(--text2)">(bos birakin: otomatik olusturulur)</span></label>
+            <input type="text" id="ghGistId" placeholder="">
+          </div>
+          <button class="btn btn-outline btn-sm btn-block" onclick="saveGithubConfig()">GitHub Baglantisini Kaydet</button>
+        </div>
+        <div id="pcConfigured" style="display:none">
+          <div style="background:#e8f5e9;border-radius:8px;padding:10px;margin-bottom:8px;font-size:.85rem">
+            <div style="font-weight:600;color:#2e7d32;margin-bottom:6px">GitHub bagli</div>
+            <div style="color:var(--text2);margin-bottom:4px">Telefon icin Gist URL:</div>
+            <div id="gistUrlDisplay" style="word-break:break-all;background:#fff;border-radius:6px;padding:8px;font-size:.75rem;font-family:monospace"></div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="showPcSetup()" style="margin-bottom:8px">Ayarlari Degistir</button>
+        </div>
+      </div>
+
+      <!-- Telefon ayarları (sunucu yokken görünür) -->
+      <div id="phoneSetupSection" style="display:none">
+        <div class="form-group">
+          <label>Gist Raw URL <span style="font-size:.75rem;color:var(--text2)">(PC'den kopyalanir)</span></label>
+          <input type="text" id="phoneGistUrl" placeholder="https://gist.githubusercontent.com/..." style="font-size:14px">
+        </div>
+        <button class="btn btn-outline btn-sm btn-block mb8" onclick="savePhoneGistUrl()">URL Kaydet</button>
+      </div>
+
+      <!-- İlerleme çubuğu -->
+      <div id="updateProgressWrap" style="display:none;margin-bottom:10px">
+        <div style="background:#f5f5f0;border-radius:8px;padding:10px">
+          <div id="updateProgressText" style="font-size:.82rem;color:var(--text2);margin-bottom:6px">Baslatiliyor...</div>
+          <div style="background:var(--border);border-radius:4px;height:6px">
+            <div id="updateProgressBar" style="background:var(--primary);border-radius:4px;height:6px;width:0%;transition:width .2s"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sonuç -->
+      <div id="updateResult" style="display:none;margin-bottom:10px;font-size:.85rem;border-radius:8px;padding:10px"></div>
+
+      <button class="btn btn-primary btn-block" id="webUpdateBtn" onclick="updatePricesFromWeb()">
+        Fiyatlari Guncelle (Web)
+      </button>
+    </div>
+
     <div class="card">
       <div class="card-title">Fiyat Listesi Guncelle</div>
       <p class="text-muted mb8">Fiyatlari guncelleyin. Degisiklikler otomatik kaydedilir.</p>
@@ -1073,6 +1129,168 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s; re
 
 document.getElementById('detailModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 document.getElementById('matListModal').addEventListener('click', function(e) { if (e.target === this) closeMatList(); });
+
+// ============ WEB FİYAT GÜNCELLEME ============
+const SERVER = 'http://localhost:3131';
+let isServerAvailable = false;
+
+async function checkServer() {
+  try {
+    const r = await fetch(SERVER + '/api/config', { signal: AbortSignal.timeout(1500) });
+    return r.ok;
+  } catch { return false; }
+}
+
+async function initWebUpdate() {
+  isServerAvailable = await checkServer();
+  if (isServerAvailable) {
+    document.getElementById('pcSetupSection').style.display = 'block';
+    document.getElementById('phoneSetupSection').style.display = 'none';
+    // Config yükle
+    const cfg = await fetch(SERVER + '/api/config').then(r => r.json());
+    if (cfg.hasToken) {
+      document.getElementById('pcNotConfigured').style.display = 'none';
+      document.getElementById('pcConfigured').style.display = 'block';
+      if (cfg.gistRawUrl) document.getElementById('gistUrlDisplay').textContent = cfg.gistRawUrl;
+    }
+  } else {
+    document.getElementById('pcSetupSection').style.display = 'none';
+    document.getElementById('phoneSetupSection').style.display = 'block';
+    const saved = localStorage.getItem('gesGistUrl');
+    if (saved) document.getElementById('phoneGistUrl').value = saved;
+  }
+}
+
+async function saveGithubConfig() {
+  const token = document.getElementById('ghToken').value.trim();
+  const gistId = document.getElementById('ghGistId').value.trim();
+  if (!token) { showToast('Token girin!', 'error'); return; }
+  await fetch(SERVER + '/api/config', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ githubToken: token, gistId })
+  });
+  showToast('Kaydedildi!', 'success');
+  document.getElementById('pcNotConfigured').style.display = 'none';
+  document.getElementById('pcConfigured').style.display = 'block';
+}
+
+function showPcSetup() {
+  document.getElementById('pcNotConfigured').style.display = 'block';
+  document.getElementById('pcConfigured').style.display = 'none';
+}
+
+function savePhoneGistUrl() {
+  const url = document.getElementById('phoneGistUrl').value.trim();
+  if (!url) { showToast('URL girin!', 'error'); return; }
+  localStorage.setItem('gesGistUrl', url);
+  showToast('URL kaydedildi!', 'success');
+}
+
+function applyScrapedPrices(prices) {
+  const catalog = getCatalog();
+  let updated = 0;
+  prices.forEach(({ id, price, priceMax }) => {
+    if (!price) return;
+    const item = catalog.find(p => p.id === id);
+    if (item) {
+      item.price = price;
+      if (priceMax) item.priceMax = priceMax;
+      updated++;
+    }
+  });
+  saveCatalog(catalog);
+  renderPriceEditor();
+  return updated;
+}
+
+async function updatePricesFromWeb() {
+  const btn = document.getElementById('webUpdateBtn');
+  const progress = document.getElementById('updateProgressWrap');
+  const progressText = document.getElementById('updateProgressText');
+  const progressBar = document.getElementById('updateProgressBar');
+  const result = document.getElementById('updateResult');
+
+  btn.disabled = true;
+  progress.style.display = 'block';
+  result.style.display = 'none';
+  progressBar.style.width = '0%';
+
+  if (isServerAvailable) {
+    // PC: SSE ile sunucudan çek
+    progressText.textContent = 'Sunucuya baglaniyor...';
+    const es = new EventSource(SERVER + '/api/fiyat-guncelle');
+    es.onmessage = (e) => {
+      const d = JSON.parse(e.data);
+      if (d.type === 'progress') {
+        progressText.textContent = d.msg;
+        progressBar.style.width = Math.round((d.done / d.total) * 100) + '%';
+      } else if (d.type === 'gist') {
+        document.getElementById('gistUrlDisplay').textContent = d.gistRawUrl;
+        document.getElementById('pcNotConfigured').style.display = 'none';
+        document.getElementById('pcConfigured').style.display = 'block';
+      } else if (d.type === 'done') {
+        es.close();
+        const updated = applyScrapedPrices(d.prices);
+        progress.style.display = 'none';
+        result.style.display = 'block';
+        result.style.background = '#e8f5e9';
+        result.style.color = '#2e7d32';
+        result.innerHTML = `<b>${updated} urun guncellendi</b> (${d.found}/${d.total} fiyat bulundu)<br><span style="font-size:.78rem">${new Date(d.updatedAt).toLocaleString('tr-TR')}</span>`;
+        btn.disabled = false;
+        showToast(updated + ' urun guncellendi!', 'success');
+      } else if (d.type === 'error') {
+        es.close();
+        progress.style.display = 'none';
+        result.style.display = 'block';
+        result.style.background = '#fce8e6';
+        result.style.color = '#d93025';
+        result.textContent = 'Hata: ' + d.msg;
+        btn.disabled = false;
+      }
+    };
+    es.onerror = () => {
+      es.close();
+      progress.style.display = 'none';
+      result.style.display = 'block';
+      result.style.background = '#fce8e6';
+      result.style.color = '#d93025';
+      result.textContent = 'Sunucu baglantisi kesildi.';
+      btn.disabled = false;
+    };
+  } else {
+    // Telefon: Gist'ten oku
+    const gistUrl = localStorage.getItem('gesGistUrl');
+    if (!gistUrl) {
+      progress.style.display = 'none';
+      result.style.display = 'block';
+      result.style.background = '#fce8e6';
+      result.style.color = '#d93025';
+      result.textContent = 'Gist URL girilmemis. Asagidan URL ekleyin.';
+      btn.disabled = false;
+      return;
+    }
+    progressText.textContent = 'Gist\'ten fiyatlar cekiliyor...';
+    progressBar.style.width = '60%';
+    try {
+      const data = await fetch(gistUrl + '?t=' + Date.now()).then(r => r.json());
+      const updated = applyScrapedPrices(data.prices || []);
+      progress.style.display = 'none';
+      result.style.display = 'block';
+      result.style.background = '#e8f5e9';
+      result.style.color = '#2e7d32';
+      result.innerHTML = `<b>${updated} urun guncellendi</b><br><span style="font-size:.78rem">${new Date(data.updatedAt).toLocaleString('tr-TR')}</span>`;
+      showToast(updated + ' urun guncellendi!', 'success');
+    } catch (e) {
+      progress.style.display = 'none';
+      result.style.display = 'block';
+      result.style.background = '#fce8e6';
+      result.style.color = '#d93025';
+      result.textContent = 'Gist okunamadi: ' + e.message;
+    }
+    btn.disabled = false;
+  }
+}
 
 // ============ PWA ============
 if ('serviceWorker' in navigator) {

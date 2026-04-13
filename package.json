@@ -1,0 +1,17 @@
+{
+  "name": "ges-o",
+  "version": "1.0.0",
+  "description": "GES-O Güneş Paneli Fiyat Hesaplama",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0",
+    "express": "^4.18.2",
+    "puppeteer-core": "^21.0.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

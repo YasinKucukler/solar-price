@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head><title>Icon Olusturucu</title></head>
+<body>
+<p>Asagidaki butonlara tikla, ikonu sag tik → "Farklı Kaydet" ile kaydet.</p>
+<canvas id="c192" width="192" height="192" style="border:1px solid #ccc;margin:8px"></canvas>
+<canvas id="c512" width="512" height="512" style="border:1px solid #ccc;margin:8px"><br>
+<button onclick="drawAndDownload(192)">icon-192.png indir</button>
+<button onclick="drawAndDownload(512)">icon-512.png indir</button>
+<script>
+function drawIcon(canvas) {
+  const s = canvas.width;
+  const ctx = canvas.getContext('2d');
+  // Background
+  const bg = ctx.createLinearGradient(0, 0, s, s);
+  bg.addColorStop(0, '#f57c00');
+  bg.addColorStop(1, '#e65100');
+  ctx.fillStyle = bg;
+  roundRect(ctx, 0, 0, s, s, s * 0.18);
+  ctx.fill();
+  // Sun circle
+  ctx.beginPath();
+  ctx.arc(s/2, s * 0.42, s * 0.18, 0, Math.PI*2);
+  ctx.fillStyle = '#FFD600';
+  ctx.fill();
+  // Sun rays
+  ctx.strokeStyle = '#FFD600';
+  ctx.lineWidth = s * 0.045;
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 8; i++) {
+    const angle = (i * Math.PI * 2) / 8;
+    const r1 = s * 0.25;
+    const r2 = s * 0.33;
+    ctx.beginPath();
+    ctx.moveTo(s/2 + Math.cos(angle) * r1, s * 0.42 + Math.sin(angle) * r1);
+    ctx.lineTo(s/2 + Math.cos(angle) * r2, s * 0.42 + Math.sin(angle) * r2);
+    ctx.stroke();
+  }
+  // Solar panel grid (bottom)
+  const px = s * 0.15, py = s * 0.62, pw = s * 0.70, ph = s * 0.25;
+  ctx.fillStyle = '#1565C0';
+  roundRect(ctx, px, py, pw, ph, s * 0.04);
+  ctx.fill();
+  // Panel grid lines
+  ctx.strokeStyle = '#90CAF9';
+  ctx.lineWidth = s * 0.018;
+  // vertical lines
+  for (let i = 1; i < 4; i++) {
+    ctx.beginPath();
+    ctx.moveTo(px + pw * i / 4, py + s*0.02);
+    ctx.lineTo(px + pw * i / 4, py + ph - s*0.02);
+    ctx.stroke();
+  }
+  // horizontal line
+  ctx.beginPath();
+  ctx.moveTo(px + s*0.02, py + ph/2);
+  ctx.lineTo(px + pw - s*0.02, py + ph/2);
+  ctx.stroke();
+  // Panel border highlight
+  ctx.strokeStyle = '#42A5F5';
+  ctx.lineWidth = s * 0.025;
+  roundRect(ctx, px, py, pw, ph, s * 0.04);
+  ctx.stroke();
+  // "GES" text
+  ctx.fillStyle = '#fff';
+  ctx.font = `bold ${s * 0.13}px Arial, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('GES-O', s/2, py - s * 0.04);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+function drawAndDownload(size) {
+  const id = 'c' + size;
+  const canvas = document.getElementById(id);
+  drawIcon(canvas);
+  const a = document.createElement('a');
+  a.download = 'icon-' + size + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+// Draw previews on load
+drawIcon(document.getElementById('c192'));
+drawIcon(document.getElementById('c512'));
+</script>
+</body>
+</html>
