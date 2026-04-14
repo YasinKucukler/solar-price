@@ -13,11 +13,12 @@ if %ERRORLEVEL% neq 0 (
   exit /b 1
 )
 
-if not exist node_modules (
-  echo  Bagimliliklar yukleniyor, bir dakika bekleyin...
-  call npm install
-  echo.
-)
+echo  Bagimliliklar kontrol ediliyor...
+call npm install --silent
+echo.
+
+echo  Eski surec temizleniyor...
+for /f "tokens=5" %%a in ('netstat -aon ^| find ":3131" ^| find "LISTENING"') do taskkill /f /pid %%a >nul 2>&1
 
 echo  Sunucu baslatiliyor...
 node server.js

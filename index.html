@@ -517,6 +517,12 @@ function getGroups() {
   return groups;
 }
 
+// ============ OTOMATİK SARF MALZEME SABİTİ ============
+const AUTO_CONSUMABLES = [
+  { productId: 'sarf_kelepce', perPanels: 4 },
+  { productId: 'sarf_bant',   perPanels: 4 },
+];
+
 // ============ STATE ============
 let materials = [];
 let editingId = null;
@@ -797,12 +803,6 @@ function removeMat(idx) {
 }
 
 // ============ OTOMATİK SARF MALZEME ============
-// Her 4 panelde bir adet: plastik kelepçe + izole bant
-const AUTO_CONSUMABLES = [
-  { productId: 'sarf_kelepce', perPanels: 4 },
-  { productId: 'sarf_bant',   perPanels: 4 },
-];
-
 function countPanels() {
   return materials.reduce((sum, m) => {
     const p = getProduct(m.productId);
