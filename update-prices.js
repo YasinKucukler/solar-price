@@ -55,7 +55,7 @@ async function pushToGist(prices, token, gistId) {
 function fmt(n) { return n ? n.toLocaleString('tr-TR') : '—'; }
 
 function updateRapor(prices) {
-  const MARKUP = 1.20;
+  const MARKUP = 1.18;
   const tarih = new Date().toLocaleDateString('tr-TR', { day:'2-digit', month:'2-digit', year:'numeric' });
   const saat  = new Date().toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' });
 
@@ -105,7 +105,7 @@ function updateRapor(prices) {
 
 > **Son güncelleme:** ${tarih} ${saat}
 > **Eski fiyat:** Katalog başlangıç değeri
-> **Yeni fiyat:** ort(web min, web max) × (1 + %20 komisyon)
+> **Yeni fiyat:** ort(web min, web max) × (1 + %18 komisyon)
 
 ---
 

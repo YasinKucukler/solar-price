@@ -523,7 +523,7 @@ const AUTO_CONSUMABLES = [
   { productId: 'sarf_bant',   perPanels: 4 },
 ];
 const SERVER = 'http://localhost:3131';
-const PRICE_MARKUP = 1.20;
+const PRICE_MARKUP = 1.18;
 
 // ============ STATE ============
 let materials = [];
@@ -1090,7 +1090,7 @@ function loadToEditor() {
 // ============ PRICE EDITOR TAB ============
 // ─── Komisyon & Ham Fiyat Yönetimi ───────────────────────────────────────────
 function getCommissionRate() {
-  return parseFloat(localStorage.getItem('gesCommissionRate') || '20');
+  return parseFloat(localStorage.getItem('gesCommissionRate') || '18');
 }
 function saveCommissionRate(rate) {
   localStorage.setItem('gesCommissionRate', String(rate));
