@@ -55,7 +55,7 @@ async function pushToGist(prices, token, gistId) {
 function fmt(n) { return n ? n.toLocaleString('tr-TR') : '—'; }
 
 function updateRapor(prices) {
-  const MARKUP = 1.25;
+  const MARKUP = 1.30;
   const tarih = new Date().toLocaleDateString('tr-TR', { day:'2-digit', month:'2-digit', year:'numeric' });
   const saat  = new Date().toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' });
 
