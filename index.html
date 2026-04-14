@@ -480,12 +480,12 @@ const DEFAULT_CATALOG = [
   {id:"sarf_boya5",group:"Sarf Malzeme",name:"Kirmizi Boya 5 kg",price:1300,priceMax:1800},
 
   // Diger
-  {id:"nakliye",group:"Diger",name:"Nakliye / Benzin",price:1500}
+  {id:"nakliye",group:"Diger",name:"Nakliye / Benzin",price:4000}
 ];
 
 const LABOR_RATE = 0.10;
 const LABOR_MIN = 8000;
-const CATALOG_VERSION = 1;
+const CATALOG_VERSION = 2;
 
 // ============ CATALOG MANAGEMENT ============
 function getCatalog() {
@@ -709,17 +709,17 @@ function buildProductRow(p) {
   const hasEntries = entries.length > 0;
 
   const urls = getProductUrls(p.id);
-  const cartBtns = urls.length
-    ? `<a href="${urls[0].url}" target="_blank" rel="noopener"
-        style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:#1565c0;color:#fff;border-radius:6px;font-size:1rem;text-decoration:none;flex-shrink:0"
-        title="${esc(urls.map(u=>u.site+': '+u.url).join('\n'))}" onclick="event.stopPropagation()">&#128722;</a>`
-    : '';
+  const cartBtns = urls.map(u =>
+    `<a href="${u.url}" target="_blank" rel="noopener"
+      style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:#1565c0;color:#fff;border-radius:5px;font-size:.75rem;font-weight:700;text-decoration:none;flex-shrink:0"
+      title="${esc(u.site)}" onclick="event.stopPropagation()">${u.site[0]}</a>`
+  ).join('');
 
   let html = `<div class="prod-row-wrap ${hasEntries ? 'has-entry' : 'no-entry'}">
     <div class="prod-row-top">
       <div style="flex:1;min-width:120px">
         <span class="prod-row-name">${esc(p.name)}</span>
-        ${cartBtns ? `<div style="margin-top:4px">${cartBtns}</div>` : ''}
+        ${cartBtns ? `<div style="display:flex;gap:3px;margin-top:4px">${cartBtns}</div>` : ''}
       </div>
       <div class="prod-input-group">
         <input type="number" id="qty_${p.id}" value="1" min="0" onclick="event.stopPropagation()" placeholder="${qtyLabel}">
