@@ -1231,18 +1231,8 @@ async function autoUpdatePricesIfStale() {
 const SERVER = 'http://localhost:3131';
 let isServerAvailable = false;
 
-async function checkServer() {
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 1500);
-    const r = await fetch(SERVER + '/api/config', { signal: ctrl.signal });
-    clearTimeout(t);
-    return r.ok;
-  } catch { return false; }
-}
-
 async function initWebUpdate() {
-  isServerAvailable = await checkServer();
+  isServerAvailable = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (isServerAvailable) {
     document.getElementById('pcSetupSection').style.display = 'block';
     document.getElementById('phoneSetupSection').style.display = 'none';
