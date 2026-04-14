@@ -79,7 +79,7 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
 .prod-input-group{display:flex;align-items:center;gap:4px}
 .prod-input-group label{font-size:.72rem;color:var(--text2)}
 .prod-input-group input{width:60px;padding:8px 6px;border:1.5px solid var(--border);border-radius:8px;font-size:16px;text-align:center;min-height:44px;background:#fff}
-.prod-add-btn{padding:10px 16px;font-size:.9rem;font-weight:600;min-height:44px;border:none;border-radius:8px;background:var(--success);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.prod-add-btn{padding:10px 8px;font-size:.82rem;font-weight:600;min-height:44px;border:none;border-radius:8px;background:var(--success);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
 .prod-add-btn:active{opacity:.8}
 
 /* Düzenleme satırı (eklendikten sonra) */
@@ -696,7 +696,7 @@ function buildProductRow(p) {
         <label>${qtyLabel}</label>
       </div>
       <div class="prod-input-group">
-        <input type="number" id="prc_${p.id}" value="${p.price}" min="0" step="0.1" onclick="event.stopPropagation()">
+        <input type="number" id="prc_${p.id}" value="${p.price}" min="0" step="0.1" onclick="event.stopPropagation()" style="width:85px">
         <label>TL</label>
       </div>
       <button class="prod-add-btn" onclick="event.stopPropagation();addProductWithQty('${p.id}')">+ Ekle</button>
