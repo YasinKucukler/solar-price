@@ -522,6 +522,8 @@ const AUTO_CONSUMABLES = [
   { productId: 'sarf_kelepce', perPanels: 4 },
   { productId: 'sarf_bant',   perPanels: 4 },
 ];
+const SERVER = 'http://localhost:3131';
+const PRICE_MARKUP = 1.25;
 
 // ============ STATE ============
 let materials = [];
@@ -1229,8 +1231,6 @@ async function autoUpdatePricesIfStale() {
 }
 
 // ============ WEB FİYAT GÜNCELLEME ============
-const SERVER = 'http://localhost:3131';
-
 async function initWebUpdate() {
   isServerAvailable = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   if (isServerAvailable) {
@@ -1276,8 +1276,6 @@ function savePhoneGistUrl() {
   localStorage.setItem('gesGistUrl', url);
   showToast('URL kaydedildi!', 'success');
 }
-
-const PRICE_MARKUP = 1.25; // %25 kar marjı
 
 function applyScrapedPrices(prices) {
   const catalog = getCatalog();
