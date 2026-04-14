@@ -525,6 +525,7 @@ const AUTO_CONSUMABLES = [
 
 // ============ STATE ============
 let materials = [];
+let isServerAvailable = false;
 let editingId = null;
 let viewingId = null;
 let openGroup = null;
@@ -1229,7 +1230,6 @@ async function autoUpdatePricesIfStale() {
 
 // ============ WEB FİYAT GÜNCELLEME ============
 const SERVER = 'http://localhost:3131';
-let isServerAvailable = false;
 
 async function initWebUpdate() {
   isServerAvailable = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
