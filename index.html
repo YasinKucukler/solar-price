@@ -532,6 +532,7 @@ renderHistory();
 calculate();
 updateMatCount();
 autoUpdatePricesIfStale();
+initWebUpdate();
 
 // ============ KWP ESTIMATE ============
 function calcKwp() {
@@ -1232,7 +1233,10 @@ let isServerAvailable = false;
 
 async function checkServer() {
   try {
-    const r = await fetch(SERVER + '/api/config', { signal: AbortSignal.timeout(1500) });
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 1500);
+    const r = await fetch(SERVER + '/api/config', { signal: ctrl.signal });
+    clearTimeout(t);
     return r.ok;
   } catch { return false; }
 }
