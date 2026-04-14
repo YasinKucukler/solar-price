@@ -525,6 +525,34 @@ const AUTO_CONSUMABLES = [
 const SERVER = 'http://localhost:3131';
 const PRICE_MARKUP = 1.14;
 
+// ============ ÜRÜN ARAMA SORGU HARİTASI ============
+const SEARCH_QUERIES = {
+  pan400:'400W monokristal güneş paneli', pan450:'450W monokristal güneş paneli',
+  pan500:'500W monokristal güneş paneli', pan550:'550W monokristal güneş paneli',
+  pan600:'600W monokristal güneş paneli', panb550:'550W bifacial güneş paneli',
+  panb600:'600W bifacial güneş paneli',
+  inv_h3:'hibrit inverter 3kW solar',  inv_h5:'hibrit inverter 5kW solar',
+  inv_h8:'hibrit inverter 8kW solar',  inv_h10:'hibrit inverter 10kW solar',
+  inv_h15:'hibrit inverter 15kW solar', inv_h20:'hibrit inverter 20kW solar',
+  inv_s3:'string inverter 3kW solar',  inv_s5:'string inverter 5kW solar',
+  inv_s8:'string inverter 8kW solar',  inv_s10:'string inverter 10kW solar',
+  inv_s15:'string inverter 15kW solar', inv_s20:'string inverter 20kW solar',
+  bat_l5:'lifepo4 5kwh batarya güneş', bat_l10:'lifepo4 10kwh batarya güneş',
+  bat_l20:'lifepo4 20kwh batarya güneş', bat_a100:'agm 100ah 12v akü solar',
+  bat_a200:'agm 200ah 12v akü solar',  bat_a200g:'gel 200ah 12v akü solar',
+};
+
+function getProductUrls(id) {
+  const scraped = getPriceUrls()[id];
+  if (scraped && scraped.length) return scraped;
+  const q = SEARCH_QUERIES[id];
+  if (!q) return [];
+  return [
+    { site: 'Akakce', url: 'https://www.akakce.com/arama/?q=' + encodeURIComponent(q) },
+    { site: 'Cimri',  url: 'https://www.cimri.com/arama?q='   + encodeURIComponent(q) },
+  ];
+}
+
 // ============ STATE ============
 let materials = [];
 let isServerAvailable = false;
@@ -680,11 +708,11 @@ function buildProductRow(p) {
   const entries = getProductEntries(p.id);
   const hasEntries = entries.length > 0;
 
-  const urls = getPriceUrls()[p.id] || [];
+  const urls = getProductUrls(p.id);
   const cartBtns = urls.map(u =>
     `<a href="${u.url}" target="_blank" rel="noopener"
-      style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:#1565c0;color:#fff;border-radius:6px;font-size:.85rem;text-decoration:none;flex-shrink:0"
-      title="${esc(u.site)}" onclick="event.stopPropagation()">&#128722;</a>`
+      style="display:inline-flex;align-items:center;justify-content:center;padding:4px 8px;background:#1565c0;color:#fff;border-radius:6px;font-size:.72rem;font-weight:600;text-decoration:none;flex-shrink:0;min-height:28px"
+      title="${esc(u.site)}" onclick="event.stopPropagation()">${esc(u.site)}</a>`
   ).join('');
 
   let html = `<div class="prod-row-wrap ${hasEntries ? 'has-entry' : 'no-entry'}">
