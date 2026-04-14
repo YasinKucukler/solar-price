@@ -523,7 +523,7 @@ const AUTO_CONSUMABLES = [
   { productId: 'sarf_bant',   perPanels: 4 },
 ];
 const SERVER = 'http://localhost:3131';
-const PRICE_MARKUP = 1.30;
+const PRICE_MARKUP = 1.20;
 
 // ============ STATE ============
 let materials = [];
@@ -678,9 +678,19 @@ function buildProductRow(p) {
   const entries = getProductEntries(p.id);
   const hasEntries = entries.length > 0;
 
+  const urls = getPriceUrls()[p.id] || [];
+  const cartBtns = urls.map(u =>
+    `<a href="${u.url}" target="_blank" rel="noopener"
+      style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:#1565c0;color:#fff;border-radius:6px;font-size:.85rem;text-decoration:none;flex-shrink:0"
+      title="${esc(u.site)}" onclick="event.stopPropagation()">&#128722;</a>`
+  ).join('');
+
   let html = `<div class="prod-row-wrap ${hasEntries ? 'has-entry' : 'no-entry'}">
     <div class="prod-row-top">
-      <span class="prod-row-name">${esc(p.name)} ${rangeHint}</span>
+      <div style="flex:1;min-width:120px">
+        <span class="prod-row-name">${esc(p.name)} ${rangeHint}</span>
+        ${cartBtns ? `<div style="display:flex;gap:4px;margin-top:4px">${cartBtns}</div>` : ''}
+      </div>
       <div class="prod-input-group">
         <input type="number" id="qty_${p.id}" value="1" min="0" onclick="event.stopPropagation()" placeholder="${qtyLabel}">
         <label>${qtyLabel}</label>
@@ -1078,24 +1088,65 @@ function loadToEditor() {
 }
 
 // ============ PRICE EDITOR TAB ============
-// ─── Fiyat Kilitleme ─────────────────────────────────────────────────────────
-function getLockedPrices() {
-  return new Set(JSON.parse(localStorage.getItem('gesPriceLocks') || '[]'));
+// ─── Komisyon & Ham Fiyat Yönetimi ───────────────────────────────────────────
+function getCommissionRate() {
+  return parseFloat(localStorage.getItem('gesCommissionRate') || '20');
+}
+function saveCommissionRate(rate) {
+  localStorage.setItem('gesCommissionRate', String(rate));
+}
+function getRawPrices() {
+  return JSON.parse(localStorage.getItem('gesRawPrices') || '{}');
+}
+function getPriceUrls() {
+  return JSON.parse(localStorage.getItem('gesPriceUrls') || '{}');
 }
 
-function togglePriceLock(id) {
-  const locks = getLockedPrices();
-  locks.has(id) ? locks.delete(id) : locks.add(id);
-  localStorage.setItem('gesPriceLocks', JSON.stringify([...locks]));
-  renderPriceEditor();
-  showToast(locks.has(id) ? 'Fiyat kilitledi' : 'Kilit kaldirildi', 'info');
+function updateCommissionRate(val) {
+  const rate = parseFloat(val);
+  if (isNaN(rate) || rate < 0) return;
+  saveCommissionRate(rate);
+  recalculateWithCommission(rate);
 }
+
+function recalculateWithCommission(rate) {
+  const catalog = getCatalog();
+  const rawPrices = getRawPrices();
+  let updated = 0;
+  Object.keys(rawPrices).forEach(id => {
+    const item = catalog.find(p => p.id === id);
+    if (!item) return;
+    const raw = rawPrices[id];
+    const avg = (raw.min + raw.max) / 2;
+    item.price = Math.round(avg * (1 + rate / 100));
+    updated++;
+  });
+  saveCatalog(catalog);
+  renderPriceEditor();
+  if (updated > 0) showToast(updated + ' fiyat yeniden hesaplandi', 'info');
+}
+
+// ─── Fiyat Kilitleme (kaldırıldı) ────────────────────────────────────────────
+function getLockedPrices() { return new Set(); }
 
 function renderPriceEditor() {
   const groups = getGroups();
-  const locks = getLockedPrices();
+  const rawPrices = getRawPrices();
+  const priceUrls = getPriceUrls();
+  const commissionRate = getCommissionRate();
   const container = document.getElementById('priceEditor');
-  let html = '';
+
+  let html = `<div style="background:#fff3e0;border-radius:10px;padding:12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <label style="font-weight:600;font-size:.9rem;color:var(--primary)">Komisyon Orani:</label>
+    <div style="display:flex;align-items:center;gap:6px">
+      <input type="number" id="commissionRateInput" value="${commissionRate}" min="0" max="200" step="1"
+        style="width:70px;padding:8px;border:1.5px solid var(--primary);border-radius:8px;font-size:16px;text-align:center;min-height:44px"
+        onchange="updateCommissionRate(this.value)">
+      <span style="font-weight:600">%</span>
+    </div>
+    <span style="font-size:.78rem;color:var(--text2)">Web'den cekilen fiyatlara uygulanir (ort. x (1 + %komisyon))</span>
+  </div>`;
+
   Object.keys(groups).forEach(g => {
     html += `<div class="price-group">
       <div class="price-group-header" onclick="togglePriceGroup(this)">
@@ -1104,22 +1155,33 @@ function renderPriceEditor() {
       </div>
       <div class="price-group-body">`;
     groups[g].forEach(p => {
-      const locked = locks.has(p.id);
-      html += `<div class="price-row" style="${locked ? 'background:#fff8e1;border-radius:8px;' : ''}">
-        <span class="pr-name">${esc(p.name)}</span>
+      const raw = rawPrices[p.id];
+      const urls = priceUrls[p.id];
+      html += `<div class="price-row">
+        <div style="flex:2;min-width:100px">
+          <span class="pr-name">${esc(p.name)}</span>`;
+      if (raw) {
+        html += `<br><span style="font-size:.72rem;color:var(--text2)">Web: ${fmtMoney(raw.min)} – ${fmtMoney(raw.max)}</span>`;
+      }
+      html += `</div>
         <div class="pr-field">
-          <span class="pr-label">Fiyat</span>
-          <input type="number" value="${p.price}" min="0" step="0.1" ${locked ? 'disabled style="opacity:.6"' : ''} onchange="updateCatalogPrice('${p.id}','price',this.value)">
+          <span class="pr-label">${raw ? 'Komisyonlu' : 'Fiyat'}</span>
+          <input type="number" value="${p.price}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','price',this.value)">
         </div>`;
-      if (p.priceMax !== undefined && p.priceMax !== null) {
+      if (!raw && p.priceMax !== undefined && p.priceMax !== null) {
         html += `<div class="pr-field">
           <span class="pr-label">Max</span>
-          <input type="number" value="${p.priceMax}" min="0" step="0.1" ${locked ? 'disabled style="opacity:.6"' : ''} onchange="updateCatalogPrice('${p.id}','priceMax',this.value)">
+          <input type="number" value="${p.priceMax}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','priceMax',this.value)">
         </div>`;
       }
-      html += `<button onclick="togglePriceLock('${p.id}')" title="${locked ? 'Kilidi kaldir' : 'Fiyati kilitle'}"
-        style="background:${locked ? '#f57c00' : '#e0e0e0'};color:${locked ? '#fff' : '#616161'};border:none;border-radius:8px;padding:8px 10px;font-size:1rem;cursor:pointer;min-height:44px">${locked ? '&#128274;' : '&#128275;'}</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${p.id}')">Sil</button>
+      if (urls && urls.length) {
+        urls.forEach(u => {
+          html += `<a href="${u.url}" target="_blank" rel="noopener"
+            style="display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;background:#1565c0;color:#fff;border-radius:8px;font-size:.78rem;font-weight:600;text-decoration:none;min-height:44px;white-space:nowrap"
+            title="${esc(u.url)}">${esc(u.site)}</a>`;
+        });
+      }
+      html += `<button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${p.id}')">Sil</button>
       </div>`;
     });
     html += '</div></div>';
@@ -1279,22 +1341,27 @@ function savePhoneGistUrl() {
 
 function applyScrapedPrices(prices) {
   const catalog = getCatalog();
-  const locks = getLockedPrices();
+  const commissionRate = getCommissionRate();
+  const rawPrices = getRawPrices();
+  const priceUrls = getPriceUrls();
   let updated = 0;
-  let skipped = 0;
-  prices.forEach(({ id, price, priceMax }) => {
+  prices.forEach(({ id, price, priceMax, searchUrls }) => {
     if (!price) return;
-    if (locks.has(id)) { skipped++; return; }
     const item = catalog.find(p => p.id === id);
     if (item) {
-      item.price = Math.round(price * PRICE_MARKUP);
-      if (priceMax) item.priceMax = Math.round(priceMax * PRICE_MARKUP);
+      const rawMax = priceMax || price;
+      rawPrices[id] = { min: price, max: rawMax };
+      if (searchUrls) priceUrls[id] = searchUrls;
+      const avg = (price + rawMax) / 2;
+      item.price = Math.round(avg * (1 + commissionRate / 100));
+      item.priceMax = null;
       updated++;
     }
   });
+  localStorage.setItem('gesRawPrices', JSON.stringify(rawPrices));
+  localStorage.setItem('gesPriceUrls', JSON.stringify(priceUrls));
   saveCatalog(catalog);
   renderPriceEditor();
-  if (skipped > 0) showToast(`${updated} guncellendi, ${skipped} kilitli atildi`, 'info');
   return updated;
 }
 

@@ -205,7 +205,13 @@ async function scrapeAll(log) {
       const { price, priceMax } = robustPrice(all);
 
       logFn(`  → Akakce:${ak.length} Cimri:${ci.length} | Fiyat:${price ? price.toLocaleString('tr-TR') + ' TL' : '-'}`);
-      results.push({ id: t.id, price, priceMax });
+      results.push({
+      id: t.id, price, priceMax,
+      searchUrls: [
+        { site: 'Akakce', url: 'https://www.akakce.com/arama/?q=' + encodeURIComponent(t.query) },
+        { site: 'Cimri',  url: 'https://www.cimri.com/arama?q='   + encodeURIComponent(t.query) },
+      ]
+    });
 
       if (i < TARGETS.length - 1) await delay(800);
     }

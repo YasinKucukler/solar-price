@@ -55,7 +55,7 @@ async function pushToGist(prices, token, gistId) {
 function fmt(n) { return n ? n.toLocaleString('tr-TR') : '—'; }
 
 function updateRapor(prices) {
-  const MARKUP = 1.30;
+  const MARKUP = 1.20;
   const tarih = new Date().toLocaleDateString('tr-TR', { day:'2-digit', month:'2-digit', year:'numeric' });
   const saat  = new Date().toLocaleTimeString('tr-TR', { hour:'2-digit', minute:'2-digit' });
 
@@ -64,9 +64,13 @@ function updateRapor(prices) {
 
   const satirlar = (items) => items.map(({ id, name, eskiMin, eskiMax }) => {
     const scraped = map[id];
-    const yeniMin = scraped ? Math.round(scraped.price * MARKUP) : null;
-    const yeniMax = scraped && scraped.priceMax ? Math.round(scraped.priceMax * MARKUP) : null;
-    return `| ${name} | ${fmt(eskiMin)} | ${fmt(eskiMax)} | ${fmt(yeniMin)} | ${fmt(yeniMax)} |`;
+    let yeniFiyat = null;
+    if (scraped && scraped.price) {
+      const rawMax = scraped.priceMax || scraped.price;
+      const avg = (scraped.price + rawMax) / 2;
+      yeniFiyat = Math.round(avg * MARKUP);
+    }
+    return `| ${name} | ${fmt(eskiMin)} | ${fmt(eskiMax)} | ${fmt(yeniFiyat)} |`;
   }).join('\n');
 
   const webUrunler = [
@@ -101,14 +105,14 @@ function updateRapor(prices) {
 
 > **Son güncelleme:** ${tarih} ${saat}
 > **Eski fiyat:** Katalog başlangıç değeri
-> **Yeni fiyat:** Web'den çekilen değer + %25 markup
+> **Yeni fiyat:** ort(web min, web max) × (1 + %20 komisyon)
 
 ---
 
 ## Web'den Güncellenen Ürünler
 
-| Ürün | Eski Min | Eski Max | Yeni Min | Yeni Max |
-|---|---:|---:|---:|---:|
+| Ürün | Eski Min | Eski Max | Yeni Fiyat |
+|---|---:|---:|---:|
 ${satirlar(webUrunler)}
 
 ---
