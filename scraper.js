@@ -96,96 +96,49 @@ function robustPrice(prices) {
 
 function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// Fiyat benzeri sayı ara (TL formatı)
-function extractPrices(text) {
-  const results = [];
-  const matches = text.match(/[\d]{1,3}(?:[.,][\d]{3})+(?:[.,]\d+)?/g) || [];
-  matches.forEach(m => {
-    const clean = m.replace(/\./g, '').replace(',', '.');
-    const n = parseFloat(clean);
-    if (n >= 500) results.push(n); // güneş ürünleri en az 500 TL
-  });
-  return results;
-}
-
-// ─── Hepsiburada ─────────────────────────────────────────────────────────────
-async function scrapeHepsiburada(page, query) {
+// ─── Akakce: Bir ürün için fiyat çek ─────────────────────────────────────────
+async function scrapeAkakce(page, query) {
   try {
-    const url = 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(query);
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 25000 });
-    await delay(2500);
-    const prices = await page.evaluate((extractFn) => {
+    const url = 'https://www.akakce.com/arama/?q=' + encodeURIComponent(query);
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await delay(1500);
+    const prices = await page.evaluate(() => {
       const results = [];
-      const selectors = [
-        '[data-test-id="price-current-price"]',
-        '[class*="price"]', '[class*="Price"]',
-        '[class*="fiyat"]', 'li[class*="product"]',
-      ];
-      selectors.forEach(sel => {
-        document.querySelectorAll(sel).forEach(el => {
-          const text = el.innerText || el.textContent || '';
-          const ms = text.match(/[\d]{1,3}(?:[.,][\d]{3})+(?:[.,]\d+)?/g) || [];
-          ms.forEach(m => {
-            const n = parseFloat(m.replace(/\./g, '').replace(',', '.'));
-            if (n >= 500) results.push(Math.round(n));
-          });
+      document.querySelectorAll('li').forEach(li => {
+        const text = li.innerText || '';
+        const matches = text.match(/[\d]+[.,][\d]{3}(?:[.,]\d+)?/g) || [];
+        matches.forEach(m => {
+          const clean = m.replace(/\./g, '').replace(',', '.');
+          const n = parseFloat(clean);
+          if (n >= 50) results.push(n);
         });
       });
-      return [...new Set(results)];
+      return results;
     });
-    return prices.slice(0, 15);
+    return prices.map(Math.round).slice(0, 15);
   } catch (e) { return []; }
 }
 
-// ─── Trendyol ─────────────────────────────────────────────────────────────────
-async function scrapeTrendyol(page, query) {
+// ─── Cimri: Bir ürün için fiyat çek ──────────────────────────────────────────
+async function scrapeCimri(page, query) {
   try {
-    const url = 'https://www.trendyol.com/sr?q=' + encodeURIComponent(query);
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 25000 });
-    await delay(2500);
+    const url = 'https://www.cimri.com/arama?q=' + encodeURIComponent(query);
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await delay(1500);
     const prices = await page.evaluate(() => {
       const results = [];
-      const selectors = [
-        '.prc-box-dscntd', '.prc-box-sllng',
-        '[class*="price"]', '[class*="Price"]',
-        '[class*="prc"]',
-      ];
-      selectors.forEach(sel => {
-        document.querySelectorAll(sel).forEach(el => {
-          const text = el.innerText || el.textContent || '';
-          const ms = text.match(/[\d]{1,3}(?:[.,][\d]{3})+(?:[.,]\d+)?/g) || [];
-          ms.forEach(m => {
-            const n = parseFloat(m.replace(/\./g, '').replace(',', '.'));
-            if (n >= 500) results.push(Math.round(n));
-          });
+      document.querySelectorAll('[class*="price"], [class*="Price"], [class*="fiyat"]').forEach(el => {
+        const text = el.innerText || '';
+        const matches = text.match(/[\d]+[.,][\d]{3}(?:[.,]\d+)?/g) || [];
+        matches.forEach(m => {
+          const clean = m.replace(/\./g, '').replace(',', '.');
+          const n = parseFloat(clean);
+          if (n >= 50) results.push(n);
         });
       });
-      return [...new Set(results)];
+      return results;
     });
-    return prices.slice(0, 15);
-  } catch (e) { return []; }
-}
-
-// ─── Amazon TR ────────────────────────────────────────────────────────────────
-async function scrapeAmazon(page, query) {
-  try {
-    const url = 'https://www.amazon.com.tr/s?k=' + encodeURIComponent(query);
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 25000 });
-    await delay(2500);
-    const prices = await page.evaluate(() => {
-      const results = [];
-      // .a-offscreen içinde tam fiyat metni bulunur ("10.599,00 TL")
-      document.querySelectorAll('.a-offscreen, .a-price').forEach(el => {
-        const text = el.innerText || el.textContent || '';
-        const ms = text.match(/[\d]{1,3}(?:[.,][\d]{3})+(?:[.,]\d+)?/g) || [];
-        ms.forEach(m => {
-          const n = parseFloat(m.replace(/\./g, '').replace(',', '.'));
-          if (n >= 500) results.push(Math.round(n));
-        });
-      });
-      return [...new Set(results)];
-    });
-    return prices.slice(0, 15);
+    return prices.map(Math.round).slice(0, 15);
   } catch (e) { return []; }
 }
 
@@ -218,36 +171,30 @@ async function scrapeAll(log) {
   try {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
-    await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-    );
     await page.setExtraHTTPHeaders({ 'Accept-Language': 'tr-TR,tr;q=0.9' });
 
     for (let i = 0; i < TARGETS.length; i++) {
       const t = TARGETS[i];
       logFn(`[${i + 1}/${TARGETS.length}] ${t.query}`);
 
-      // Sırayla çek (paralel yapılırsa bot tespiti artar)
-      const hb = await scrapeHepsiburada(page, t.query);
-      await delay(1000);
-      const ty = await scrapeTrendyol(page, t.query);
-      await delay(1000);
-      const az = await scrapeAmazon(page, t.query);
+      const [ak, ci] = await Promise.all([
+        scrapeAkakce(page, t.query),
+        scrapeCimri(page, t.query),
+      ]);
 
-      const all = [...hb, ...ty, ...az];
+      const all = [...ak, ...ci];
       const { price, priceMax } = robustPrice(all);
 
-      logFn(`  → HB:${hb.length} TY:${ty.length} AZ:${az.length} | Fiyat:${price ? price.toLocaleString('tr-TR') + ' TL' : '-'}`);
+      logFn(`  → Akakce:${ak.length} Cimri:${ci.length} | Fiyat:${price ? price.toLocaleString('tr-TR') + ' TL' : '-'}`);
       results.push({
         id: t.id, price, priceMax,
         searchUrls: [
-          { site: 'Hepsiburada', url: 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(t.query) },
-          { site: 'Trendyol',    url: 'https://www.trendyol.com/sr?q='     + encodeURIComponent(t.query) },
-          { site: 'Amazon',      url: 'https://www.amazon.com.tr/s?k='     + encodeURIComponent(t.query) },
+          { site: 'Akakce', url: 'https://www.akakce.com/arama/?q=' + encodeURIComponent(t.query) },
+          { site: 'Cimri',  url: 'https://www.cimri.com/arama?q='   + encodeURIComponent(t.query) },
         ]
       });
 
-      if (i < TARGETS.length - 1) await delay(1200);
+      if (i < TARGETS.length - 1) await delay(800);
     }
   } finally {
     await browser.close();
