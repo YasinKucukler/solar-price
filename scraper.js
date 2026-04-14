@@ -206,12 +206,13 @@ async function scrapeAll(log) {
 
       logFn(`  → Akakce:${ak.length} Cimri:${ci.length} | Fiyat:${price ? price.toLocaleString('tr-TR') + ' TL' : '-'}`);
       results.push({
-      id: t.id, price, priceMax,
-      searchUrls: [
-        { site: 'Akakce', url: 'https://www.akakce.com/arama/?q=' + encodeURIComponent(t.query) },
-        { site: 'Cimri',  url: 'https://www.cimri.com/arama?q='   + encodeURIComponent(t.query) },
-      ]
-    });
+        id: t.id, price, priceMax,
+        searchUrls: [
+          { site: 'Hepsiburada', url: 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(t.query) },
+          { site: 'Trendyol',    url: 'https://www.trendyol.com/sr?q='     + encodeURIComponent(t.query) },
+          { site: 'Amazon',      url: 'https://www.amazon.com.tr/s?k='     + encodeURIComponent(t.query) },
+        ]
+      });
 
       if (i < TARGETS.length - 1) await delay(800);
     }

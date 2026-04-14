@@ -543,13 +543,12 @@ const SEARCH_QUERIES = {
 };
 
 function getProductUrls(id) {
-  const scraped = getPriceUrls()[id];
-  if (scraped && scraped.length) return scraped;
   const q = SEARCH_QUERIES[id];
   if (!q) return [];
   return [
-    { site: 'Akakce', url: 'https://www.akakce.com/arama/?q=' + encodeURIComponent(q) },
-    { site: 'Cimri',  url: 'https://www.cimri.com/arama?q='   + encodeURIComponent(q) },
+    { site: 'Hepsiburada', url: 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(q) },
+    { site: 'Trendyol',    url: 'https://www.trendyol.com/sr?q='     + encodeURIComponent(q) },
+    { site: 'Amazon',      url: 'https://www.amazon.com.tr/s?k='     + encodeURIComponent(q) },
   ];
 }
 
