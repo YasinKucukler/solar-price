@@ -371,35 +371,41 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
 // ============ DEFAULT PRODUCT CATALOG ============
 const DEFAULT_CATALOG = [
   // Gunes Paneli
-  {id:"pan400",group:"Gunes Paneli",subgroup:"Monokristal",name:"400W Monokristal (adet)",price:4200,priceMax:5000},
-  {id:"pan450",group:"Gunes Paneli",subgroup:"Monokristal",name:"450W Monokristal (adet)",price:4800,priceMax:5800},
-  {id:"pan500",group:"Gunes Paneli",subgroup:"Monokristal",name:"500W Monokristal (adet)",price:5400,priceMax:6500},
-  {id:"pan550",group:"Gunes Paneli",subgroup:"Monokristal",name:"550W Monokristal (adet)",price:6000,priceMax:7200},
-  {id:"pan600",group:"Gunes Paneli",subgroup:"Monokristal",name:"600W Monokristal (adet)",price:6800,priceMax:8000},
-  {id:"panb550",group:"Gunes Paneli",subgroup:"Bifacial",name:"550W Bifacial (adet)",price:7000,priceMax:8500},
-  {id:"panb600",group:"Gunes Paneli",subgroup:"Bifacial",name:"600W Bifacial (adet)",price:7800,priceMax:9200},
+  {id:"tt_pan450",group:"Gunes Paneli",subgroup:"TOPcon 16BB",name:"TommaTech 450Wp 16BB TOPcon Güneş Paneli",price:7307,priceMax:8769},
+  {id:"tt_pan600",group:"Gunes Paneli",subgroup:"TOPcon 16BB",name:"TommaTech 600Wp 16BB TOPcon Güneş Paneli",price:9743,priceMax:11692},
+  {id:"tt_pan40",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 40Wp TOPcon Güneş Paneli",price:1136,priceMax:1363},
+  {id:"tt_pan45a",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 45Wp TOPcon Güneş Paneli",price:1277,priceMax:1533},
+  {id:"tt_pan45b",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 45Wp TOPcon Güneş Paneli (v2)",price:1561,priceMax:1874},
+  {id:"tt_pan65",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 65Wp TOPcon Güneş Paneli",price:1845,priceMax:2214},
+  {id:"tt_pan70",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 70Wp TOPcon Güneş Paneli",price:1987,priceMax:2385},
+  {id:"tt_pan80",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 80Wp TOPcon Güneş Paneli",price:2271,priceMax:2725},
+  {id:"tt_pan85",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 85Wp TOPcon Güneş Paneli",price:2413,priceMax:2896},
+  {id:"tt_pan100",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 100Wp TOPcon Güneş Paneli",price:2839,priceMax:3407},
+  {id:"tt_pan110",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 110Wp TOPcon Güneş Paneli",price:3123,priceMax:3747},
+  {id:"tt_pan120",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 120Wp TOPcon Güneş Paneli",price:3407,priceMax:4088},
+  {id:"tt_pan130",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 130Wp TOPcon Güneş Paneli",price:3691,priceMax:4429},
+  {id:"tt_pan240",group:"Gunes Paneli",subgroup:"Half-Cut",name:"TommaTech 240Wp 48PM Half-Cut MB Güneş Paneli",price:4769,priceMax:5723},
+  {id:"tt_pan285",group:"Gunes Paneli",subgroup:"TOPcon",name:"Tommatech 285Wp TOPcon Güneş Paneli",price:5664,priceMax:6796},
 
   // Inverter
-  {id:"inv_h3",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 3kW",price:22000,priceMax:28000},
-  {id:"inv_h5",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 5kW",price:30000,priceMax:38000},
-  {id:"inv_h8",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 8kW",price:42000,priceMax:52000},
-  {id:"inv_h10",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 10kW",price:50000,priceMax:62000},
-  {id:"inv_h15",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 15kW",price:72000,priceMax:88000},
-  {id:"inv_h20",group:"Inverter",subgroup:"Hibrit",name:"Hibrit Inverter 20kW",price:92000,priceMax:115000},
-  {id:"inv_s3",group:"Inverter",subgroup:"String",name:"String Inverter 3kW",price:12000,priceMax:16000},
-  {id:"inv_s5",group:"Inverter",subgroup:"String",name:"String Inverter 5kW",price:16000,priceMax:22000},
-  {id:"inv_s8",group:"Inverter",subgroup:"String",name:"String Inverter 8kW",price:22000,priceMax:30000},
-  {id:"inv_s10",group:"Inverter",subgroup:"String",name:"String Inverter 10kW",price:27000,priceMax:36000},
-  {id:"inv_s15",group:"Inverter",subgroup:"String",name:"String Inverter 15kW",price:38000,priceMax:50000},
-  {id:"inv_s20",group:"Inverter",subgroup:"String",name:"String Inverter 20kW",price:48000,priceMax:65000},
+  {id:"tt_1k_12v",group:"Inverter",subgroup:"Standart",name:"TommaTech 1K 12V 1000W",price:9519,priceMax:11423},
+  {id:"tt_1k_mppt",group:"Inverter",subgroup:"Standart",name:"TommaTech 1K 12V MPPT 1000W",price:11954,priceMax:14345},
+  {id:"tt_3k_24v",group:"Inverter",subgroup:"Standart",name:"TommaTech 3K 24V 3000W",price:13061,priceMax:15673},
+  {id:"tt_5k_48v",group:"Inverter",subgroup:"Standart",name:"TommaTech 5K 48V 5000W",price:25020,priceMax:30024},
+  {id:"tt_pro_3k",group:"Inverter",subgroup:"Pro",name:"TommaTech Pro 3K 24V WIFI MPPT 3000W Akıllı İnv.",price:20119,priceMax:24143},
+  {id:"tt_pro_5k",group:"Inverter",subgroup:"Pro",name:"TommaTech Pro 5K 48V WIFI MPPT 5000W Akıllı İnv.",price:26397,priceMax:31677},
+  {id:"tt_prox_15k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 1.5K 12V MPPT 1500W Akıllı İnv.",price:17691,priceMax:21230},
+  {id:"tt_prox_42k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 4.2K 24V MPPT 4200W Akıllı İnv.",price:24198,priceMax:29037},
+  {id:"tt_prox_62k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 6.2K 48V MPPT 6200W Akıllı İnv.",price:25737,priceMax:30885},
+  {id:"tt_prox_8k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 8K 48V MPPT 8000W Akıllı İnv.",price:40476,priceMax:48571},
+  {id:"tt_plusx_11k",group:"Inverter",subgroup:"PlusX",name:"TommaTech PlusX 11K 48V MPPT 11000W Akıllı İnv.",price:66196,priceMax:79435},
+  {id:"tt_15k",group:"Inverter",subgroup:"Buyuk Seri",name:"TommaTech 15K 48V F 2MPPT 15.000W",price:147598,priceMax:177118},
+  {id:"tt_20k",group:"Inverter",subgroup:"Buyuk Seri",name:"TommaTech 20K 48V F 2MPPT 20.000W",price:198494,priceMax:238193},
 
   // Aku / Batarya
-  {id:"bat_l5",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LiFePO4 5kWh",price:55000,priceMax:70000},
-  {id:"bat_l10",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LiFePO4 10kWh",price:100000,priceMax:130000},
-  {id:"bat_l20",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LiFePO4 20kWh",price:190000,priceMax:240000},
-  {id:"bat_a100",group:"Aku / Batarya",subgroup:"AGM / Gel",name:"AGM 100Ah 12V",price:5500,priceMax:7000},
-  {id:"bat_a200",group:"Aku / Batarya",subgroup:"AGM / Gel",name:"AGM 200Ah 12V",price:10000,priceMax:13000},
-  {id:"bat_a200g",group:"Aku / Batarya",subgroup:"AGM / Gel",name:"Gel 200Ah 12V",price:12000,priceMax:15000},
+  {id:"tt_bat100ah",group:"Aku / Batarya",subgroup:"LiFePO4",name:"Tommatech LiFePO4 PB Series 51.2V 100Ah LV Batarya",price:45422,priceMax:54507},
+  {id:"tt_bat102ah",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LFP Batarya Modüler 51.2V 102Ah",price:48900,priceMax:58680},
+  {id:"tt_bat280ah",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LFP Batarya 51.2V 280Ah",price:123406,priceMax:148088},
 
   // Montaj Sistemi
   {id:"mnt_demir60",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Demir Profil 60x60mm 6mt",price:950,priceMax:1400},
@@ -415,12 +421,10 @@ const DEFAULT_CATALOG = [
   {id:"mnt_zemin",group:"Montaj Sistemi",subgroup:"Baglanti Elemanlari",name:"Zemin Montaj Seti (Panel basi)",price:1200,priceMax:1800},
 
   // DC Kablo
-  {id:"dc4",group:"DC Kablo",subgroup:"Gunes Kablosu",name:"Gunes Kablosu 4mm² (mt)",price:28,priceMax:36},
-  {id:"dc6",group:"DC Kablo",subgroup:"Gunes Kablosu",name:"Gunes Kablosu 6mm² (mt)",price:42,priceMax:55},
-  {id:"dc10",group:"DC Kablo",subgroup:"Gunes Kablosu",name:"Gunes Kablosu 10mm² (mt)",price:68,priceMax:85},
-  {id:"mc4_cift",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"MC4 Konnektor Cifti",price:85,priceMax:120},
-  {id:"mc4_t2",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"MC4 T-Dallanma 1-2",price:180,priceMax:250},
-  {id:"mc4_t3",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"MC4 T-Dallanma 1-3",price:220,priceMax:300},
+  {id:"tt_dc6",group:"DC Kablo",subgroup:"Gunes Kablosu",name:"6.0mm Solar Kablo PVI1-F Kırmızı (mt)",price:56,priceMax:67},
+  {id:"tt_mc4",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"SMC4-MC4 Dişi-Erkek Bağlantı Konnektörü Set",price:65,priceMax:78},
+  {id:"tt_mc4y",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"SMC4-Y BRANCH Dişi-Erkek Y Konnektörü Set",price:369,priceMax:443},
+  {id:"tt_mc4multi",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"Multi Contact MC4 Dişi-Erkek Konnektör Set",price:209,priceMax:250},
 
   // AC Kablo
   {id:"nyy25",group:"AC Kablo",name:"NYY 3x2.5mm² (mt)",price:65,priceMax:85},
@@ -479,13 +483,29 @@ const DEFAULT_CATALOG = [
   {id:"sarf_boya25",group:"Sarf Malzeme",name:"Kirmizi Boya 2.5 kg",price:750,priceMax:1000},
   {id:"sarf_boya5",group:"Sarf Malzeme",name:"Kirmizi Boya 5 kg",price:1300,priceMax:1800},
 
+  // Sulama Pompasi Invertoru
+  {id:"tt_sp_22_1f",group:"Sulama Pompasi Invertoru",subgroup:"450VDC",name:"TT-2,2kW 1Faz/220 Sulama Pompası İnv. 450VDC",price:10354,priceMax:12424},
+  {id:"tt_sp_22_3f",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-2,2kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:10596,priceMax:12715},
+  {id:"tt_sp_4k",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-4kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:13178,priceMax:15814},
+  {id:"tt_sp_55k",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-5,5kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:15211,priceMax:18253},
+  {id:"tt_sp_185k",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-18,5kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:36127,priceMax:43352},
+  {id:"tt_sp_22k",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-22kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:40858,priceMax:49029},
+  {id:"tt_sp_75k",group:"Sulama Pompasi Invertoru",subgroup:"1000VDC",name:"TT-7,5kW 3Faz Sulama Pompası İnv. 1000VDC",price:18278,priceMax:21934},
+  {id:"tt_sp_11k",group:"Sulama Pompasi Invertoru",subgroup:"1000VDC",name:"TT-11kW 3Faz Sulama Pompası İnv. 1000VDC",price:24414,priceMax:29296},
+  {id:"tt_sp_15k",group:"Sulama Pompasi Invertoru",subgroup:"1000VDC",name:"TT-15kW 3Faz Sulama Pompası İnv. 1000VDC",price:27481,priceMax:32978},
+
+  // Diyot
+  {id:"slm_mdk25a",group:"Diyot",name:"SLM-DİYOD-MDK25A (TT-2.2-MF ile TT-5.5-TF arası)",price:601,priceMax:721},
+  {id:"slm_mdk55a",group:"Diyot",name:"SLM-DİYOD-MDK55A (TT-7.5-TF ile TT-11.0-TF arası)",price:601,priceMax:721},
+  {id:"slm_mdk70a",group:"Diyot",name:"SLM-DİYOD-MDK70A (TT-15.0-TF için)",price:873,priceMax:1048},
+
   // Diger
   {id:"nakliye",group:"Diger",name:"Nakliye / Benzin",price:4000}
 ];
 
 const LABOR_RATE = 0.10;
 const LABOR_MIN = 8000;
-const CATALOG_VERSION = 2;
+const CATALOG_VERSION = 3;
 
 // ============ CATALOG MANAGEMENT ============
 function getCatalog() {
