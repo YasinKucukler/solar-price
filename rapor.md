@@ -1,65 +1,136 @@
 # GES-O Fiyat Raporu
 
-> **Eski fiyat:** Katalogdaki başlangıç değeri  
-> **Yeni fiyat:** Web'den çekildikten sonra uygulanacak değer (+%25 markup)  
-> **Not:** Sadece web güncellemesine dahil ürünler (+%25 alır. Diğerleri değişmez.)
+> **Fiyat:** Katalogdaki KDV hariç değer  
+> **Max:** KDV dahil değer (×1.2)  
+> **Not:** Fiyatlar TommaTech bayi fiyat listesinden alınmıştır.
 
 ---
 
-## 1. Güneş Paneli — Web Güncellenir (+%25)
+## 1. Güneş Paneli — Manuel
 
-| Ürün | Eski Min | Eski Max | Yeni Min | Yeni Max |
-|---|---:|---:|---:|---:|
-| 400W Monokristal (adet) | 4.200 | 5.000 | 5.250 | 6.250 |
-| 450W Monokristal (adet) | 4.800 | 5.800 | 6.000 | 7.250 |
-| 500W Monokristal (adet) | 5.400 | 6.500 | 6.750 | 8.125 |
-| 550W Monokristal (adet) | 6.000 | 7.200 | 7.500 | 9.000 |
-| 600W Monokristal (adet) | 6.800 | 8.000 | 8.500 | 10.000 |
-| 550W Bifacial (adet) | 7.000 | 8.500 | 8.750 | 10.625 |
-| 600W Bifacial (adet) | 7.800 | 9.200 | 9.750 | 11.500 |
+### TOPcon 16BB
 
----
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TommaTech 450Wp 16BB TOPcon Güneş Paneli | 7.307 | 8.769 |
+| TommaTech 600Wp 16BB TOPcon Güneş Paneli | 9.743 | 11.692 |
 
-## 2. İnverter — Web Güncellenir (+%25)
+### TOPcon Küçük Panel
 
-### Hibrit
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| Tommatech 40Wp TOPcon Güneş Paneli | 1.136 | 1.363 |
+| Tommatech 45Wp TOPcon Güneş Paneli | 1.277 | 1.533 |
+| Tommatech 45Wp TOPcon Güneş Paneli (v2) | 1.561 | 1.874 |
+| Tommatech 65Wp TOPcon Güneş Paneli | 1.845 | 2.214 |
+| Tommatech 70Wp TOPcon Güneş Paneli | 1.987 | 2.385 |
+| Tommatech 80Wp TOPcon Güneş Paneli | 2.271 | 2.725 |
+| Tommatech 85Wp TOPcon Güneş Paneli | 2.413 | 2.896 |
+| Tommatech 100Wp TOPcon Güneş Paneli | 2.839 | 3.407 |
+| Tommatech 110Wp TOPcon Güneş Paneli | 3.123 | 3.747 |
+| Tommatech 120Wp TOPcon Güneş Paneli | 3.407 | 4.088 |
+| Tommatech 130Wp TOPcon Güneş Paneli | 3.691 | 4.429 |
 
-| Ürün | Eski Min | Eski Max | Yeni Min | Yeni Max |
-|---|---:|---:|---:|---:|
-| Hibrit Inverter 3kW | 22.000 | 28.000 | 27.500 | 35.000 |
-| Hibrit Inverter 5kW | 30.000 | 38.000 | 37.500 | 47.500 |
-| Hibrit Inverter 8kW | 42.000 | 52.000 | 52.500 | 65.000 |
-| Hibrit Inverter 10kW | 50.000 | 62.000 | 62.500 | 77.500 |
-| Hibrit Inverter 15kW | 72.000 | 88.000 | 90.000 | 110.000 |
-| Hibrit Inverter 20kW | 92.000 | 115.000 | 115.000 | 143.750 |
+### Diğer
 
-### String
-
-| Ürün | Eski Min | Eski Max | Yeni Min | Yeni Max |
-|---|---:|---:|---:|---:|
-| String Inverter 3kW | 12.000 | 16.000 | 15.000 | 20.000 |
-| String Inverter 5kW | 16.000 | 22.000 | 20.000 | 27.500 |
-| String Inverter 8kW | 22.000 | 30.000 | 27.500 | 37.500 |
-| String Inverter 10kW | 27.000 | 36.000 | 33.750 | 45.000 |
-| String Inverter 15kW | 38.000 | 50.000 | 47.500 | 62.500 |
-| String Inverter 20kW | 48.000 | 65.000 | 60.000 | 81.250 |
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TommaTech 240Wp 48PM Half-Cut MB Güneş Paneli | 4.769 | 5.723 |
+| Tommatech 285Wp TOPcon Güneş Paneli | 5.664 | 6.796 |
 
 ---
 
-## 3. Akü / Batarya — Web Güncellenir (+%25)
+## 2. İnverter — Manuel
 
-| Ürün | Eski Min | Eski Max | Yeni Min | Yeni Max |
-|---|---:|---:|---:|---:|
-| LiFePO4 5kWh | 55.000 | 70.000 | 68.750 | 87.500 |
-| LiFePO4 10kWh | 100.000 | 130.000 | 125.000 | 162.500 |
-| LiFePO4 20kWh | 190.000 | 240.000 | 237.500 | 300.000 |
-| AGM 100Ah 12V | 5.500 | 7.000 | 6.875 | 8.750 |
-| AGM 200Ah 12V | 10.000 | 13.000 | 12.500 | 16.250 |
-| Gel 200Ah 12V | 12.000 | 15.000 | 15.000 | 18.750 |
+### Standart
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TommaTech 1K 12V 1000W | 9.519 | 11.423 |
+| TommaTech 1K 12V MPPT 1000W | 11.954 | 14.345 |
+| TommaTech 3K 24V 3000W | 13.061 | 15.673 |
+| TommaTech 5K 48V 5000W | 25.020 | 30.024 |
+
+### Pro
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TommaTech Pro 3K 24V WIFI MPPT 3000W Akıllı İnv. | 20.119 | 24.143 |
+| TommaTech Pro 5K 48V WIFI MPPT 5000W Akıllı İnv. | 26.397 | 31.677 |
+
+### ProX
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TommaTech ProX 1.5K 12V MPPT 1500W Akıllı İnv. | 17.691 | 21.230 |
+| TommaTech ProX 4.2K 24V MPPT 4200W Akıllı İnv. | 24.198 | 29.037 |
+| TommaTech ProX 6.2K 48V MPPT 6200W Akıllı İnv. | 25.737 | 30.885 |
+| TommaTech ProX 8K 48V MPPT 8000W Akıllı İnv. | 40.476 | 48.571 |
+
+### PlusX
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TommaTech PlusX 11K 48V MPPT 11000W Akıllı İnv. | 66.196 | 79.435 |
+
+### Büyük Seri
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TommaTech 15K 48V F 2MPPT 15.000W | 147.598 | 177.118 |
+| TommaTech 20K 48V F 2MPPT 20.000W | 198.494 | 238.193 |
 
 ---
 
-## 4. Montaj Sistemi — Manuel (web güncellenmez)
+## 3. Akü / Batarya — Manuel
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| Tommatech LiFePO4 PB Series 51.2V 100Ah LV Batarya | 45.422 | 54.507 |
+| LFP Batarya Modüler 51.2V 102Ah | 48.900 | 58.680 |
+| LFP Batarya 51.2V 280Ah | 123.406 | 148.088 |
+
+---
+
+## 4. Sulama Pompası İnvertörü — Manuel
+
+### 450VDC
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TT-2,2kW 1Faz/220 Sulama Pompası İnv. 450VDC | 10.354 | 12.424 |
+
+### 900VDC
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TT-2,2kW 3Faz/380 Sulama Pompası İnv. 900VDC | 10.596 | 12.715 |
+| TT-4kW 3Faz/380 Sulama Pompası İnv. 900VDC | 13.178 | 15.814 |
+| TT-5,5kW 3Faz/380 Sulama Pompası İnv. 900VDC | 15.211 | 18.253 |
+| TT-18,5kW 3Faz/380 Sulama Pompası İnv. 900VDC | 36.127 | 43.352 |
+| TT-22kW 3Faz/380 Sulama Pompası İnv. 900VDC | 40.858 | 49.029 |
+
+### 1000VDC
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| TT-7,5kW 3Faz Sulama Pompası İnv. 1000VDC | 18.278 | 21.934 |
+| TT-11kW 3Faz Sulama Pompası İnv. 1000VDC | 24.414 | 29.296 |
+| TT-15kW 3Faz Sulama Pompası İnv. 1000VDC | 27.481 | 32.978 |
+
+---
+
+## 5. Diyot — Manuel
+
+| Ürün | Fiyat (TL) | Max (TL) |
+|---|---:|---:|
+| SLM-DİYOD-MDK25A (TT-2.2-MF ile TT-5.5-TF arası) | 601 | 721 |
+| SLM-DİYOD-MDK55A (TT-7.5-TF ile TT-11.0-TF arası) | 601 | 721 |
+| SLM-DİYOD-MDK70A (TT-15.0-TF için) | 873 | 1.048 |
+
+---
+
+## 6. Montaj Sistemi — Manuel
 
 | Ürün | Fiyat (TL) | Max (TL) |
 |---|---:|---:|
@@ -77,20 +148,18 @@
 
 ---
 
-## 5. DC Kablo — Manuel
+## 7. DC Kablo — Manuel
 
 | Ürün | Fiyat (TL) | Max (TL) |
 |---|---:|---:|
-| Güneş Kablosu 4mm² (mt) | 28 | 36 |
-| Güneş Kablosu 6mm² (mt) | 42 | 55 |
-| Güneş Kablosu 10mm² (mt) | 68 | 85 |
-| MC4 Konnektör Çifti | 85 | 120 |
-| MC4 T-Dallanma 1-2 | 180 | 250 |
-| MC4 T-Dallanma 1-3 | 220 | 300 |
+| 6.0mm Solar Kablo PVI1-F Kırmızı (mt) | 56 | 67 |
+| SMC4-MC4 Dişi-Erkek Bağlantı Konnektörü Set | 65 | 78 |
+| SMC4-Y BRANCH Dişi-Erkek Y Konnektörü Set | 369 | 443 |
+| Multi Contact MC4 Dişi-Erkek Konnektör Set | 209 | 250 |
 
 ---
 
-## 6. AC Kablo — Manuel
+## 8. AC Kablo — Manuel
 
 | Ürün | Fiyat (TL) | Max (TL) |
 |---|---:|---:|
@@ -103,7 +172,7 @@
 
 ---
 
-## 7. Koruma ve Elektrik — Manuel
+## 9. Koruma ve Elektrik — Manuel
 
 | Ürün | Fiyat (TL) | Max (TL) |
 |---|---:|---:|
@@ -127,7 +196,7 @@
 
 ---
 
-## 8. Topraklama — Manuel
+## 10. Topraklama — Manuel
 
 | Ürün | Fiyat (TL) | Max (TL) |
 |---|---:|---:|
@@ -138,7 +207,7 @@
 
 ---
 
-## 9. İzleme / Monitoring — Manuel
+## 11. İzleme / Monitoring — Manuel
 
 | Ürün | Fiyat (TL) | Max (TL) |
 |---|---:|---:|
@@ -147,7 +216,7 @@
 
 ---
 
-## 10. Kablo Kanalı — Manuel
+## 12. Kablo Kanalı — Manuel
 
 | Ürün | Fiyat (TL) | Max (TL) |
 |---|---:|---:|
@@ -160,7 +229,7 @@
 
 ---
 
-## 11. Sarf Malzeme — Manuel
+## 13. Sarf Malzeme — Manuel
 
 | Ürün | Fiyat (TL) | Max (TL) |
 |---|---:|---:|
@@ -177,20 +246,32 @@
 
 ---
 
-## 12. Diğer — Manuel
+## 14. Diğer — Manuel
 
 | Ürün | Fiyat (TL) |
 |---|---:|
-| Nakliye / Benzin | 1.500 |
+| Nakliye / Benzin | 4.000 |
 
 ---
 
 ## Özet
 
-| | Adet |
+| Grup | Ürün Sayısı |
 |---|---:|
-| Web'den güncellenen ürün | 25 |
-| Manuel fiyatlı ürün | 57 |
-| **Toplam** | **82** |
+| Güneş Paneli | 15 |
+| İnverter | 13 |
+| Akü / Batarya | 3 |
+| Sulama Pompası İnvertörü | 9 |
+| Diyot | 3 |
+| Montaj Sistemi | 11 |
+| DC Kablo | 4 |
+| AC Kablo | 6 |
+| Koruma ve Elektrik | 17 |
+| Topraklama | 4 |
+| İzleme / Monitoring | 2 |
+| Kablo Kanalı | 6 |
+| Sarf Malzeme | 10 |
+| Diğer | 1 |
+| **Toplam** | **104** |
 
-> Rapor tarihi: 2026-04-14
+> Rapor tarihi: 2026-06-15
