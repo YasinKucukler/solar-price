@@ -538,7 +538,8 @@ const DEFAULT_CATALOG = [
   {id:"slm_mdk70a",group:"Diyot",name:"SLM-DİYOD-MDK70A (TT-15.0-TF için)",price:1048},
 
   // Diger
-  {id:"nakliye",group:"Diger",name:"Nakliye / Benzin",price:4500}
+  {id:"benzin",group:"Diger",name:"Benzin",price:2500},
+  {id:"nakliye",group:"Diger",name:"Nakliye",price:3500}
 ];
 
 const LABOR_RATE = 0.25;
@@ -1101,17 +1102,17 @@ function resetForm() {
 }
 
 function addDefaultItems() {
-  const nakliye = getProduct('nakliye');
-  if (nakliye) {
-    materials.push({
+  ['benzin', 'nakliye'].forEach(pid => {
+    const p = getProduct(pid);
+    if (p) materials.push({
       uid: Date.now() + Math.random(),
-      productId: nakliye.id,
-      name: nakliye.group + ' - ' + nakliye.name,
+      productId: p.id,
+      name: p.group + ' - ' + p.name,
       qty: 1,
-      price: nakliye.price,
+      price: p.price,
       priceMax: null
     });
-  }
+  });
 }
 
 function newCustomer() {
