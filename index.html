@@ -657,7 +657,7 @@ let viewingId = null;
 let openGroup = null;
 let openSubgroup = null;
 let _offerTouched = false;
-let _selectedBuffer = null;
+let _selectedBuffer = 0.12;
 
 // ============ TEKLİF CHIP'LERİ ============
 const OFFER_BUFFERS = [
@@ -1024,8 +1024,7 @@ function calculate() {
   const cost = matTotal + laborTotal;
 
   if (!_offerTouched && cost > 0) {
-    const buf = _selectedBuffer !== null ? _selectedBuffer : 0.12;
-    document.getElementById('offerPrice').value = Math.round(cost * (1 + buf) / 50) * 50;
+    document.getElementById('offerPrice').value = Math.round(cost * (1 + _selectedBuffer) / 50) * 50;
   } else if (!_offerTouched && cost === 0) {
     document.getElementById('offerPrice').value = '';
   }
@@ -1092,7 +1091,7 @@ function saveProject() {
 function resetForm() {
   editingId = null;
   _offerTouched = false;
-  _selectedBuffer = null;
+  _selectedBuffer = 0.12;
   document.getElementById('customerName').value = '';
   document.getElementById('projectDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('systemType').value = '';
