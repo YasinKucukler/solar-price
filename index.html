@@ -159,6 +159,32 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
 .toast-success{background:#2e7d32}
 .toast-error{background:#d93025}
 .toast-info{background:#f57c00}
+
+/* Paylaş butonları */
+.share-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.btn-print{background:#1565c0;color:#fff}
+.btn-wa{background:#25d366;color:#fff}
+.btn-share{background:#546e7a;color:#fff}
+
+/* Print view — yalnızca yazdırırken görünür */
+#printView{display:none}
+@media print{
+  body>*{display:none!important}
+  #printView{display:block!important;font-family:Arial,Helvetica,sans-serif;color:#000;padding:16mm 20mm;font-size:11pt;line-height:1.5}
+  #printView h1{font-size:18pt;margin:0 0 4px;color:#e65100}
+  #printView .pv-sub{font-size:9pt;color:#555;margin-bottom:14mm}
+  #printView .pv-info{display:flex;justify-content:space-between;margin-bottom:8mm;font-size:10pt}
+  #printView .pv-info div{line-height:1.8}
+  #printView table{width:100%;border-collapse:collapse;margin-bottom:6mm;font-size:10pt}
+  #printView th{background:#f57c00;color:#fff;padding:5px 8px;text-align:left}
+  #printView td{padding:4px 8px;border-bottom:1px solid #ddd}
+  #printView tr:nth-child(even) td{background:#fafafa}
+  #printView .pv-totals{margin-left:auto;width:220pt;font-size:10pt}
+  #printView .pv-totals tr td:first-child{color:#444}
+  #printView .pv-totals tr td:last-child{text-align:right;font-weight:600}
+  #printView .pv-offer-row td{font-size:13pt;font-weight:700;color:#e65100;border-top:2px solid #e65100;padding-top:6px}
+  #printView .pv-note{margin-top:8mm;font-size:9pt;color:#555;border-top:1px solid #ddd;padding-top:6mm}
+}
 </style>
 </head>
 <body>
@@ -222,7 +248,7 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
     <div class="labor-box">
       <div class="lb-title">Kurulum Isciligi</div>
       <div class="lb-row"><span>Malzeme Toplami</span><span id="labMatSum">0 TL</span></div>
-      <div class="lb-row"><span>Iscilik Orani</span><span>%10</span></div>
+      <div class="lb-row"><span>Iscilik Orani</span><span>%25</span></div>
       <div class="lb-row"><span>Hesaplanan Iscilik</span><span id="labCalc">0 TL</span></div>
       <div class="lb-row"><span>Taban Iscilik</span><span>8.000 TL</span></div>
       <div class="lb-row lb-total"><span>Iscilik Toplam</span><span id="labTotal">8.000 TL</span></div>
@@ -233,8 +259,9 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
       <div class="card-title">Musteriye Teklif Fiyati</div>
       <div class="form-group">
         <label>Toplam Teklif Fiyati (TL)</label>
-        <input type="number" id="offerPrice" placeholder="0" oninput="calculate()" min="0">
+        <input type="number" id="offerPrice" placeholder="Otomatik hesaplanır" oninput="_offerTouched=true;calculate()" min="0">
       </div>
+      <div id="offerChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"></div>
     </div>
 
     <!-- Summary -->
@@ -246,6 +273,12 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
       <div class="summary-row"><span>Teklif Fiyati</span><span id="sumOffer">0 TL</span></div>
       <div class="summary-row profit"><span>KAR</span><span id="sumProfit" class="profit-pos">0 TL</span></div>
       <div class="summary-row"><span>Kar Marji</span><span id="sumMargin">%0</span></div>
+    </div>
+
+    <div class="share-row">
+      <button class="btn btn-print" style="flex:1" onclick="printQuote()">&#128438; Yazdır / PDF</button>
+      <button class="btn btn-wa" style="flex:1" onclick="shareWhatsApp()">&#128233; WhatsApp</button>
+      <button class="btn btn-share" style="flex:1" onclick="shareQuote()">&#8679; Paylaş</button>
     </div>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -340,6 +373,9 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
 
 <div id="toast" class="toast"></div>
 
+<!-- Print View — yalnızca @media print'te görünür -->
+<div id="printView"></div>
+
 <!-- Material List Modal -->
 <div class="modal-overlay" id="matListModal">
   <div class="modal" style="max-width:560px">
@@ -361,6 +397,8 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
     <div id="modalBody"></div>
     <div class="modal-actions">
       <button class="btn btn-danger btn-sm" id="modalDeleteBtn">Sil</button>
+      <button class="btn btn-print btn-sm" onclick="printProjectById(viewingId)">&#128438; Yazdır</button>
+      <button class="btn btn-wa btn-sm" onclick="shareProjectWhatsApp(viewingId)">&#128233; WA</button>
       <button class="btn btn-primary btn-sm" onclick="loadToEditor()">Duzenle</button>
       <button class="btn btn-outline btn-sm" onclick="closeModal()">Kapat</button>
     </div>
@@ -370,42 +408,42 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
 <script>
 // ============ DEFAULT PRODUCT CATALOG ============
 const DEFAULT_CATALOG = [
-  // Gunes Paneli
-  {id:"tt_pan450",group:"Gunes Paneli",subgroup:"TOPcon 16BB",name:"TommaTech 450Wp 16BB TOPcon Güneş Paneli",price:7307,priceMax:8769},
-  {id:"tt_pan600",group:"Gunes Paneli",subgroup:"TOPcon 16BB",name:"TommaTech 600Wp 16BB TOPcon Güneş Paneli",price:9743,priceMax:11692},
-  {id:"tt_pan40",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 40Wp TOPcon Güneş Paneli",price:1136,priceMax:1363},
-  {id:"tt_pan45a",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 45Wp TOPcon Güneş Paneli",price:1277,priceMax:1533},
-  {id:"tt_pan45b",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 45Wp TOPcon Güneş Paneli (v2)",price:1561,priceMax:1874},
-  {id:"tt_pan65",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 65Wp TOPcon Güneş Paneli",price:1845,priceMax:2214},
-  {id:"tt_pan70",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 70Wp TOPcon Güneş Paneli",price:1987,priceMax:2385},
-  {id:"tt_pan80",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 80Wp TOPcon Güneş Paneli",price:2271,priceMax:2725},
-  {id:"tt_pan85",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 85Wp TOPcon Güneş Paneli",price:2413,priceMax:2896},
-  {id:"tt_pan100",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 100Wp TOPcon Güneş Paneli",price:2839,priceMax:3407},
-  {id:"tt_pan110",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 110Wp TOPcon Güneş Paneli",price:3123,priceMax:3747},
-  {id:"tt_pan120",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 120Wp TOPcon Güneş Paneli",price:3407,priceMax:4088},
-  {id:"tt_pan130",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 130Wp TOPcon Güneş Paneli",price:3691,priceMax:4429},
-  {id:"tt_pan240",group:"Gunes Paneli",subgroup:"Half-Cut",name:"TommaTech 240Wp 48PM Half-Cut MB Güneş Paneli",price:4769,priceMax:5723},
-  {id:"tt_pan285",group:"Gunes Paneli",subgroup:"TOPcon",name:"Tommatech 285Wp TOPcon Güneş Paneli",price:5664,priceMax:6796},
+  // Gunes Paneli — artan fiyat
+  {id:"tt_pan40",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 40Wp TOPcon Güneş Paneli",price:1363},
+  {id:"tt_pan45a",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 45Wp TOPcon Güneş Paneli",price:1533},
+  {id:"tt_pan45b",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 45Wp TOPcon Güneş Paneli (v2)",price:1874},
+  {id:"tt_pan65",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 65Wp TOPcon Güneş Paneli",price:2214},
+  {id:"tt_pan70",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 70Wp TOPcon Güneş Paneli",price:2385},
+  {id:"tt_pan80",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 80Wp TOPcon Güneş Paneli",price:2725},
+  {id:"tt_pan85",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 85Wp TOPcon Güneş Paneli",price:2896},
+  {id:"tt_pan100",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 100Wp TOPcon Güneş Paneli",price:3407},
+  {id:"tt_pan110",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 110Wp TOPcon Güneş Paneli",price:3747},
+  {id:"tt_pan120",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 120Wp TOPcon Güneş Paneli",price:4088},
+  {id:"tt_pan130",group:"Gunes Paneli",subgroup:"TOPcon Kucuk",name:"Tommatech 130Wp TOPcon Güneş Paneli",price:4429},
+  {id:"tt_pan240",group:"Gunes Paneli",subgroup:"Half-Cut",name:"TommaTech 240Wp 48PM Half-Cut MB Güneş Paneli",price:5723},
+  {id:"tt_pan285",group:"Gunes Paneli",subgroup:"TOPcon",name:"Tommatech 285Wp TOPcon Güneş Paneli",price:6796},
+  {id:"tt_pan450",group:"Gunes Paneli",subgroup:"TOPcon 16BB",name:"TommaTech 450Wp 16BB TOPcon Güneş Paneli",price:8769},
+  {id:"tt_pan600",group:"Gunes Paneli",subgroup:"TOPcon 16BB",name:"TommaTech 600Wp 16BB TOPcon Güneş Paneli",price:11692},
 
-  // Inverter
-  {id:"tt_1k_12v",group:"Inverter",subgroup:"Standart",name:"TommaTech 1K 12V 1000W",price:9519,priceMax:11423},
-  {id:"tt_1k_mppt",group:"Inverter",subgroup:"Standart",name:"TommaTech 1K 12V MPPT 1000W",price:11954,priceMax:14345},
-  {id:"tt_3k_24v",group:"Inverter",subgroup:"Standart",name:"TommaTech 3K 24V 3000W",price:13061,priceMax:15673},
-  {id:"tt_5k_48v",group:"Inverter",subgroup:"Standart",name:"TommaTech 5K 48V 5000W",price:25020,priceMax:30024},
-  {id:"tt_pro_3k",group:"Inverter",subgroup:"Pro",name:"TommaTech Pro 3K 24V WIFI MPPT 3000W Akıllı İnv.",price:20119,priceMax:24143},
-  {id:"tt_pro_5k",group:"Inverter",subgroup:"Pro",name:"TommaTech Pro 5K 48V WIFI MPPT 5000W Akıllı İnv.",price:26397,priceMax:31677},
-  {id:"tt_prox_15k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 1.5K 12V MPPT 1500W Akıllı İnv.",price:17691,priceMax:21230},
-  {id:"tt_prox_42k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 4.2K 24V MPPT 4200W Akıllı İnv.",price:24198,priceMax:29037},
-  {id:"tt_prox_62k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 6.2K 48V MPPT 6200W Akıllı İnv.",price:25737,priceMax:30885},
-  {id:"tt_prox_8k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 8K 48V MPPT 8000W Akıllı İnv.",price:40476,priceMax:48571},
-  {id:"tt_plusx_11k",group:"Inverter",subgroup:"PlusX",name:"TommaTech PlusX 11K 48V MPPT 11000W Akıllı İnv.",price:66196,priceMax:79435},
-  {id:"tt_15k",group:"Inverter",subgroup:"Buyuk Seri",name:"TommaTech 15K 48V F 2MPPT 15.000W",price:147598,priceMax:177118},
-  {id:"tt_20k",group:"Inverter",subgroup:"Buyuk Seri",name:"TommaTech 20K 48V F 2MPPT 20.000W",price:198494,priceMax:238193},
+  // Inverter — artan fiyat
+  {id:"tt_1k_12v",group:"Inverter",subgroup:"Standart",name:"TommaTech 1K 12V 1000W",price:11423},
+  {id:"tt_1k_mppt",group:"Inverter",subgroup:"Standart",name:"TommaTech 1K 12V MPPT 1000W",price:14345},
+  {id:"tt_3k_24v",group:"Inverter",subgroup:"Standart",name:"TommaTech 3K 24V 3000W",price:15673},
+  {id:"tt_prox_15k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 1.5K 12V MPPT 1500W Akıllı İnv.",price:21230},
+  {id:"tt_pro_3k",group:"Inverter",subgroup:"Pro",name:"TommaTech Pro 3K 24V WIFI MPPT 3000W Akıllı İnv.",price:24143},
+  {id:"tt_prox_42k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 4.2K 24V MPPT 4200W Akıllı İnv.",price:29037},
+  {id:"tt_5k_48v",group:"Inverter",subgroup:"Standart",name:"TommaTech 5K 48V 5000W",price:30024},
+  {id:"tt_prox_62k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 6.2K 48V MPPT 6200W Akıllı İnv.",price:30885},
+  {id:"tt_pro_5k",group:"Inverter",subgroup:"Pro",name:"TommaTech Pro 5K 48V WIFI MPPT 5000W Akıllı İnv.",price:31677},
+  {id:"tt_prox_8k",group:"Inverter",subgroup:"ProX",name:"TommaTech ProX 8K 48V MPPT 8000W Akıllı İnv.",price:48571},
+  {id:"tt_plusx_11k",group:"Inverter",subgroup:"PlusX",name:"TommaTech PlusX 11K 48V MPPT 11000W Akıllı İnv.",price:79435},
+  {id:"tt_15k",group:"Inverter",subgroup:"Buyuk Seri",name:"TommaTech 15K 48V F 2MPPT 15.000W",price:177118},
+  {id:"tt_20k",group:"Inverter",subgroup:"Buyuk Seri",name:"TommaTech 20K 48V F 2MPPT 20.000W",price:238193},
 
-  // Aku / Batarya
-  {id:"tt_bat100ah",group:"Aku / Batarya",subgroup:"LiFePO4",name:"Tommatech LiFePO4 PB Series 51.2V 100Ah LV Batarya",price:45422,priceMax:54507},
-  {id:"tt_bat102ah",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LFP Batarya Modüler 51.2V 102Ah",price:48900,priceMax:58680},
-  {id:"tt_bat280ah",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LFP Batarya 51.2V 280Ah",price:123406,priceMax:148088},
+  // Aku / Batarya — artan fiyat
+  {id:"tt_bat100ah",group:"Aku / Batarya",subgroup:"LiFePO4",name:"Tommatech LiFePO4 PB Series 51.2V 100Ah LV Batarya",price:54507},
+  {id:"tt_bat102ah",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LFP Batarya Modüler 51.2V 102Ah",price:58680},
+  {id:"tt_bat280ah",group:"Aku / Batarya",subgroup:"LiFePO4",name:"LFP Batarya 51.2V 280Ah",price:148088},
 
   // Montaj Sistemi
   {id:"mnt_demir60",group:"Montaj Sistemi",subgroup:"Profil ve Ray",name:"Demir Profil 60x60mm 6mt",price:950,priceMax:1400},
@@ -420,11 +458,11 @@ const DEFAULT_CATALOG = [
   {id:"mnt_lbrkt",group:"Montaj Sistemi",subgroup:"Baglanti Elemanlari",name:"L-Braketi Seti",price:350,priceMax:500},
   {id:"mnt_zemin",group:"Montaj Sistemi",subgroup:"Baglanti Elemanlari",name:"Zemin Montaj Seti (Panel basi)",price:1200,priceMax:1800},
 
-  // DC Kablo
-  {id:"tt_dc6",group:"DC Kablo",subgroup:"Gunes Kablosu",name:"6.0mm Solar Kablo PVI1-F Kırmızı (mt)",price:56,priceMax:67},
-  {id:"tt_mc4",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"SMC4-MC4 Dişi-Erkek Bağlantı Konnektörü Set",price:65,priceMax:78},
-  {id:"tt_mc4y",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"SMC4-Y BRANCH Dişi-Erkek Y Konnektörü Set",price:369,priceMax:443},
-  {id:"tt_mc4multi",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"Multi Contact MC4 Dişi-Erkek Konnektör Set",price:209,priceMax:250},
+  // DC Kablo — artan fiyat
+  {id:"tt_dc6",group:"DC Kablo",subgroup:"Gunes Kablosu",name:"6.0mm Solar Kablo PVI1-F Kırmızı (mt)",price:67},
+  {id:"tt_mc4",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"SMC4-MC4 Dişi-Erkek Bağlantı Konnektörü Set",price:78},
+  {id:"tt_mc4multi",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"Multi Contact MC4 Dişi-Erkek Konnektör Set",price:250},
+  {id:"tt_mc4y",group:"DC Kablo",subgroup:"MC4 Konnektor",name:"SMC4-Y BRANCH Dişi-Erkek Y Konnektörü Set",price:443},
 
   // AC Kablo
   {id:"nyy25",group:"AC Kablo",name:"NYY 3x2.5mm² (mt)",price:65,priceMax:85},
@@ -483,44 +521,62 @@ const DEFAULT_CATALOG = [
   {id:"sarf_boya25",group:"Sarf Malzeme",name:"Kirmizi Boya 2.5 kg",price:750,priceMax:1000},
   {id:"sarf_boya5",group:"Sarf Malzeme",name:"Kirmizi Boya 5 kg",price:1300,priceMax:1800},
 
-  // Sulama Pompasi Invertoru
-  {id:"tt_sp_22_1f",group:"Sulama Pompasi Invertoru",subgroup:"450VDC",name:"TT-2,2kW 1Faz/220 Sulama Pompası İnv. 450VDC",price:10354,priceMax:12424},
-  {id:"tt_sp_22_3f",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-2,2kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:10596,priceMax:12715},
-  {id:"tt_sp_4k",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-4kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:13178,priceMax:15814},
-  {id:"tt_sp_55k",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-5,5kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:15211,priceMax:18253},
-  {id:"tt_sp_185k",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-18,5kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:36127,priceMax:43352},
-  {id:"tt_sp_22k",group:"Sulama Pompasi Invertoru",subgroup:"900VDC",name:"TT-22kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:40858,priceMax:49029},
-  {id:"tt_sp_75k",group:"Sulama Pompasi Invertoru",subgroup:"1000VDC",name:"TT-7,5kW 3Faz Sulama Pompası İnv. 1000VDC",price:18278,priceMax:21934},
-  {id:"tt_sp_11k",group:"Sulama Pompasi Invertoru",subgroup:"1000VDC",name:"TT-11kW 3Faz Sulama Pompası İnv. 1000VDC",price:24414,priceMax:29296},
-  {id:"tt_sp_15k",group:"Sulama Pompasi Invertoru",subgroup:"1000VDC",name:"TT-15kW 3Faz Sulama Pompası İnv. 1000VDC",price:27481,priceMax:32978},
+  // Sulama Pompasi Invertoru — artan kW sırası
+  {id:"tt_sp_22_1f",group:"Sulama Pompasi Invertoru",name:"TT-2,2kW 1Faz/220 Sulama Pompası İnv. 450VDC",price:12424},
+  {id:"tt_sp_22_3f",group:"Sulama Pompasi Invertoru",name:"TT-2,2kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:12715},
+  {id:"tt_sp_4k",group:"Sulama Pompasi Invertoru",name:"TT-4kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:15814},
+  {id:"tt_sp_55k",group:"Sulama Pompasi Invertoru",name:"TT-5,5kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:18253},
+  {id:"tt_sp_75k",group:"Sulama Pompasi Invertoru",name:"TT-7,5kW 3Faz Sulama Pompası İnv. 1000VDC",price:21934},
+  {id:"tt_sp_11k",group:"Sulama Pompasi Invertoru",name:"TT-11kW 3Faz Sulama Pompası İnv. 1000VDC",price:29296},
+  {id:"tt_sp_15k",group:"Sulama Pompasi Invertoru",name:"TT-15kW 3Faz Sulama Pompası İnv. 1000VDC",price:32978},
+  {id:"tt_sp_185k",group:"Sulama Pompasi Invertoru",name:"TT-18,5kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:43352},
+  {id:"tt_sp_22k",group:"Sulama Pompasi Invertoru",name:"TT-22kW 3Faz/380 Sulama Pompası İnv. 900VDC",price:49029},
 
   // Diyot
-  {id:"slm_mdk25a",group:"Diyot",name:"SLM-DİYOD-MDK25A (TT-2.2-MF ile TT-5.5-TF arası)",price:601,priceMax:721},
-  {id:"slm_mdk55a",group:"Diyot",name:"SLM-DİYOD-MDK55A (TT-7.5-TF ile TT-11.0-TF arası)",price:601,priceMax:721},
-  {id:"slm_mdk70a",group:"Diyot",name:"SLM-DİYOD-MDK70A (TT-15.0-TF için)",price:873,priceMax:1048},
+  {id:"slm_mdk25a",group:"Diyot",name:"SLM-DİYOD-MDK25A (TT-2.2-MF ile TT-5.5-TF arası)",price:721},
+  {id:"slm_mdk55a",group:"Diyot",name:"SLM-DİYOD-MDK55A (TT-7.5-TF ile TT-11.0-TF arası)",price:721},
+  {id:"slm_mdk70a",group:"Diyot",name:"SLM-DİYOD-MDK70A (TT-15.0-TF için)",price:1048},
 
   // Diger
   {id:"nakliye",group:"Diger",name:"Nakliye / Benzin",price:4000}
 ];
 
-const LABOR_RATE = 0.10;
+const LABOR_RATE = 0.25;
 const LABOR_MIN = 8000;
-const CATALOG_VERSION = 3;
 
 // ============ CATALOG MANAGEMENT ============
+function mergeMissingDefaults(cat) {
+  const ids = new Set(cat.map(p => p.id));
+  DEFAULT_CATALOG.forEach(p => { if (!ids.has(p.id)) cat.push({...p}); });
+  return cat;
+}
+
 function getCatalog() {
-  const ver = localStorage.getItem('gesCatalogVersion');
-  if (ver && Number(ver) >= CATALOG_VERSION) {
-    const saved = localStorage.getItem('gesCatalog');
-    if (saved) return JSON.parse(saved);
-  }
-  localStorage.setItem('gesCatalog', JSON.stringify(DEFAULT_CATALOG));
-  localStorage.setItem('gesCatalogVersion', String(CATALOG_VERSION));
-  return JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+  const saved = localStorage.getItem('gesCatalog');
+  if (saved) return mergeMissingDefaults(JSON.parse(saved));
+  const fresh = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+  localStorage.setItem('gesCatalog', JSON.stringify(fresh));
+  return fresh;
+}
+
+// ============ SEKMELER ARASI SYNC ============
+const BC = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('ges-o-sync') : null;
+if (BC) {
+  BC.onmessage = (e) => {
+    if (e.data.type === 'catalog') {
+      renderProductGroups();
+      if (document.getElementById('tab-prices').classList.contains('active')) renderPriceEditor();
+      showToast('Katalog baska sekmede guncellendi', 'info');
+    }
+    if (e.data.type === 'projects') {
+      if (document.getElementById('tab-history').classList.contains('active')) renderHistory();
+    }
+  };
 }
 
 function saveCatalog(catalog) {
   localStorage.setItem('gesCatalog', JSON.stringify(catalog));
+  if (BC) BC.postMessage({ type: 'catalog' });
 }
 
 function getProduct(id) {
@@ -580,6 +636,40 @@ let editingId = null;
 let viewingId = null;
 let openGroup = null;
 let openSubgroup = null;
+let _offerTouched = false;
+let _selectedBuffer = null;
+
+// ============ TEKLİF CHIP'LERİ ============
+const OFFER_BUFFERS = [
+  { label: '+%10', buf: 0.10, color: '#e37400', bg: '#fef3e2' },
+  { label: '+%12', buf: 0.12, color: '#e37400', bg: '#fef3e2' },
+  { label: '+%15', buf: 0.15, color: '#e37400', bg: '#fef3e2' },
+  { label: '+%18', buf: 0.18, color: '#c5221f', bg: '#fce8e6' },
+  { label: '+%20', buf: 0.20, color: '#c5221f', bg: '#fce8e6' },
+  { label: '+%25', buf: 0.25, color: '#c5221f', bg: '#fce8e6' },
+];
+
+function updateOfferChips(cost) {
+  const container = document.getElementById('offerChips');
+  if (!container) return;
+  if (cost <= 0) { container.innerHTML = ''; return; }
+  container.innerHTML = OFFER_BUFFERS.map(b => {
+    const price = Math.round(cost * (1 + b.buf) / 50) * 50;
+    const isActive = _selectedBuffer === b.buf;
+    return `<button onclick="applyOffer(${price}, ${b.buf})" style="
+      padding:7px 10px;border:2px solid ${b.color};border-radius:8px;
+      background:${isActive ? b.color : b.bg};color:${isActive ? '#fff' : b.color};
+      font-weight:600;font-size:.78rem;cursor:pointer;min-height:44px;line-height:1.3;
+      -webkit-tap-highlight-color:transparent">${b.label}<br><span style="font-size:.72rem;font-weight:400">${fmtMoney(price)}</span></button>`;
+  }).join('');
+}
+
+function applyOffer(price, buf) {
+  _selectedBuffer = buf !== undefined ? buf : null;
+  _offerTouched = false;
+  document.getElementById('offerPrice').value = price;
+  calculate();
+}
 
 // ============ INIT ============
 document.getElementById('projectDate').value = new Date().toISOString().split('T')[0];
@@ -912,6 +1002,14 @@ function calculate() {
   const laborCalc = matTotal * LABOR_RATE;
   const laborTotal = Math.max(laborCalc, matTotal > 0 ? LABOR_MIN : 0);
   const cost = matTotal + laborTotal;
+
+  if (!_offerTouched && cost > 0) {
+    const buf = _selectedBuffer !== null ? _selectedBuffer : 0.12;
+    document.getElementById('offerPrice').value = Math.round(cost * (1 + buf) / 50) * 50;
+  } else if (!_offerTouched && cost === 0) {
+    document.getElementById('offerPrice').value = '';
+  }
+
   const offer = parseFloat(document.getElementById('offerPrice').value) || 0;
   const profit = offer - cost;
   const margin = offer > 0 ? ((profit / offer) * 100).toFixed(1) : 0;
@@ -929,6 +1027,7 @@ function calculate() {
   document.getElementById('sumMargin').textContent = '%' + margin;
   updateMatCount();
   updateKwpDisplay();
+  updateOfferChips(cost);
 }
 
 // ============ SAVE / LOAD ============
@@ -964,6 +1063,7 @@ function saveProject() {
     projects.unshift(data);
   }
   localStorage.setItem('gesProjects', JSON.stringify(projects));
+  if (BC) BC.postMessage({ type: 'projects' });
   showToast('Proje kaydedildi!', 'success');
   resetForm();
   renderHistory();
@@ -971,6 +1071,8 @@ function saveProject() {
 
 function resetForm() {
   editingId = null;
+  _offerTouched = false;
+  _selectedBuffer = null;
   document.getElementById('customerName').value = '';
   document.getElementById('projectDate').value = new Date().toISOString().split('T')[0];
   document.getElementById('systemType').value = '';
@@ -1020,6 +1122,8 @@ function editFromHistory(id) {
     if (!confirm('Mevcut formu temizleyip bu projeyi duzenlemek istiyor musunuz?')) return;
   }
   editingId = p.id;
+  _offerTouched = true;
+  _selectedBuffer = null;
   document.getElementById('customerName').value = p.customer;
   document.getElementById('projectDate').value = p.date;
   document.getElementById('systemType').value = p.systemType || '';
@@ -1111,6 +1215,57 @@ function showDetail(id) {
 
 function closeModal() { document.getElementById('detailModal').classList.remove('show'); viewingId = null; }
 
+function printProjectById(id) {
+  const projects = JSON.parse(localStorage.getItem('gesProjects') || '[]');
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  const matRows = (p.materials || []).filter(m => m.qty > 0).map(m => {
+    const isMt = m.name.includes('(mt)');
+    return `<tr><td>${esc(m.name)}</td><td style="text-align:center">${m.qty} ${isMt ? 'mt' : 'ad'}</td><td style="text-align:right">${fmtMoney(m.price)}</td><td style="text-align:right">${fmtMoney(m.qty * m.price)}</td></tr>`;
+  }).join('');
+  const tags = [p.systemType, p.installLocation, p.kwp > 0 ? p.kwp.toFixed(2) + ' kWp' : ''].filter(Boolean).join(' · ');
+  document.getElementById('printView').innerHTML = `
+    <h1>&#9728; GES-O Güneş Enerjisi Teklifi</h1>
+    <div class="pv-sub">${new Date().toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric'})}</div>
+    <div class="pv-info">
+      <div><b>Müşteri:</b> ${esc(p.customer)}<br>${tags ? '<span style="color:#777">'+esc(tags)+'</span>' : ''}</div>
+      <div style="text-align:right"><b>Tarih:</b> ${p.date}</div>
+    </div>
+    <table>
+      <thead><tr><th>Ürün / Malzeme</th><th style="text-align:center">Miktar</th><th style="text-align:right">Birim Fiyat</th><th style="text-align:right">Toplam</th></tr></thead>
+      <tbody>${matRows}</tbody>
+    </table>
+    <table class="pv-totals">
+      <tr><td>Malzeme Toplamı</td><td>${fmtMoney(p.matTotal)}</td></tr>
+      <tr><td>Kurulum İşçiliği</td><td>${fmtMoney(p.laborTotal)}</td></tr>
+      <tr><td>Toplam Maliyet</td><td>${fmtMoney(p.cost)}</td></tr>
+      <tr class="pv-offer-row"><td>TEKLİF FİYATI</td><td>${fmtMoney(p.offer)}</td></tr>
+    </table>
+    ${p.note ? `<div class="pv-note"><b>Not:</b> ${esc(p.note)}</div>` : ''}
+    <div class="pv-note" style="margin-top:6mm">Bu teklif GES-O uygulaması ile oluşturulmuştur.</div>`;
+  window.print();
+}
+
+function shareProjectWhatsApp(id) {
+  const projects = JSON.parse(localStorage.getItem('gesProjects') || '[]');
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  const tags = [p.systemType, p.installLocation, p.kwp > 0 ? p.kwp.toFixed(2) + ' kWp' : ''].filter(Boolean).join(' | ');
+  let msg = `☀️ *GES-O Güneş Enerjisi Teklifi*\n━━━━━━━━━━━━━━━━━━\n`;
+  msg += `👤 *Müşteri:* ${p.customer}\n📅 *Tarih:* ${p.date}\n`;
+  if (tags) msg += `🔧 ${tags}\n`;
+  msg += `\n*📦 Malzeme Listesi:*\n`;
+  (p.materials || []).filter(m => m.qty > 0).forEach(m => {
+    const isMt = m.name.includes('(mt)');
+    msg += `• ${m.name.replace(/^[^-]+ - /, '')} × ${m.qty} ${isMt ? 'mt' : 'ad'} = ${fmtMoney(m.qty * m.price)}\n`;
+  });
+  msg += `\n━━━━━━━━━━━━━━━━━━\n`;
+  msg += `📊 Malzeme: ${fmtMoney(p.matTotal)}\n👷 İşçilik: ${fmtMoney(p.laborTotal)}\n💰 Maliyet: ${fmtMoney(p.cost)}\n`;
+  msg += `\n*🏷️ TEKLİF: ${fmtMoney(p.offer)}*\n`;
+  if (p.note) msg += `\n📝 Not: ${p.note}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
 function deleteProject(id) {
   if (!confirm('Silmek istediginize emin misiniz?')) return;
   let p = JSON.parse(localStorage.getItem('gesProjects') || '[]');
@@ -1124,6 +1279,8 @@ function loadToEditor() {
   const p = projects.find(x => x.id === viewingId);
   if (!p) return;
   editingId = p.id;
+  _offerTouched = true;
+  _selectedBuffer = null;
   document.getElementById('customerName').value = p.customer;
   document.getElementById('projectDate').value = p.date;
   document.getElementById('systemType').value = p.systemType || '';
@@ -1285,6 +1442,107 @@ function addNewProduct() {
   renderPriceEditor();
   renderProductGroups();
   showToast('Urun eklendi!', 'success');
+}
+
+// ============ YAZDIRMA / PAYLAŞMA ============
+function buildQuoteData() {
+  const matTotal = materials.reduce((s, m) => s + m.qty * m.price, 0);
+  const laborCalc = matTotal * LABOR_RATE;
+  const laborTotal = Math.max(laborCalc, matTotal > 0 ? LABOR_MIN : 0);
+  const cost = matTotal + laborTotal;
+  const offer = parseFloat(document.getElementById('offerPrice').value) || 0;
+  const profit = offer - cost;
+  const margin = offer > 0 ? ((profit / offer) * 100).toFixed(1) : 0;
+  return {
+    customer: document.getElementById('customerName').value || 'Müşteri',
+    date: document.getElementById('projectDate').value,
+    systemType: document.getElementById('systemType').value,
+    installLocation: document.getElementById('installLocation').value,
+    note: document.getElementById('projectNote').value,
+    matTotal, laborTotal, cost, offer, profit, margin,
+    kwp: calcKwp()
+  };
+}
+
+function printQuote() {
+  const d = buildQuoteData();
+  const offer = parseFloat(document.getElementById('offerPrice').value) || 0;
+  if (!offer) { showToast('Önce teklif fiyatı girin!', 'error'); return; }
+
+  const matRows = materials.filter(m => m.qty > 0).map(m => {
+    const isMt = m.name.includes('(mt)');
+    return `<tr><td>${esc(m.name)}</td><td style="text-align:center">${m.qty} ${isMt ? 'mt' : 'ad'}</td><td style="text-align:right">${fmtMoney(m.price)}</td><td style="text-align:right">${fmtMoney(m.qty * m.price)}</td></tr>`;
+  }).join('');
+
+  const tags = [d.systemType, d.installLocation, d.kwp > 0 ? d.kwp.toFixed(2) + ' kWp' : ''].filter(Boolean).join(' · ');
+
+  document.getElementById('printView').innerHTML = `
+    <h1>&#9728; GES-O Güneş Enerjisi Teklifi</h1>
+    <div class="pv-sub">${new Date().toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric'})}</div>
+    <div class="pv-info">
+      <div><b>Müşteri:</b> ${esc(d.customer)}<br>${tags ? '<span style="color:#777">'+esc(tags)+'</span>' : ''}</div>
+      <div style="text-align:right"><b>Tarih:</b> ${d.date}</div>
+    </div>
+    <table>
+      <thead><tr><th>Ürün / Malzeme</th><th style="text-align:center">Miktar</th><th style="text-align:right">Birim Fiyat</th><th style="text-align:right">Toplam</th></tr></thead>
+      <tbody>${matRows}</tbody>
+    </table>
+    <table class="pv-totals">
+      <tr><td>Malzeme Toplamı</td><td>${fmtMoney(d.matTotal)}</td></tr>
+      <tr><td>Kurulum İşçiliği (%${Math.round(LABOR_RATE * 100)}, min ${fmtMoney(LABOR_MIN)})</td><td>${fmtMoney(d.laborTotal)}</td></tr>
+      <tr><td>Toplam Maliyet</td><td>${fmtMoney(d.cost)}</td></tr>
+      <tr class="pv-offer-row"><td>TEKLİF FİYATI</td><td>${fmtMoney(d.offer)}</td></tr>
+    </table>
+    ${d.note ? `<div class="pv-note"><b>Not:</b> ${esc(d.note)}</div>` : ''}
+    <div class="pv-note" style="margin-top:6mm">Bu teklif GES-O uygulaması ile oluşturulmuştur.</div>`;
+
+  window.print();
+}
+
+function buildWhatsAppText() {
+  const d = buildQuoteData();
+  const offer = parseFloat(document.getElementById('offerPrice').value) || 0;
+  const tags = [d.systemType, d.installLocation, d.kwp > 0 ? d.kwp.toFixed(2) + ' kWp' : ''].filter(Boolean).join(' | ');
+
+  let msg = `☀️ *GES-O Güneş Enerjisi Teklifi*\n`;
+  msg += `━━━━━━━━━━━━━━━━━━\n`;
+  msg += `👤 *Müşteri:* ${d.customer}\n`;
+  msg += `📅 *Tarih:* ${d.date}\n`;
+  if (tags) msg += `🔧 ${tags}\n`;
+  msg += `\n*📦 Malzeme Listesi:*\n`;
+
+  materials.filter(m => m.qty > 0).forEach(m => {
+    const isMt = m.name.includes('(mt)');
+    msg += `• ${m.name.replace(/^[^-]+ - /, '')} × ${m.qty} ${isMt ? 'mt' : 'ad'} = ${fmtMoney(m.qty * m.price)}\n`;
+  });
+
+  msg += `\n━━━━━━━━━━━━━━━━━━\n`;
+  msg += `📊 Malzeme: ${fmtMoney(d.matTotal)}\n`;
+  msg += `👷 İşçilik: ${fmtMoney(d.laborTotal)}\n`;
+  msg += `💰 Maliyet: ${fmtMoney(d.cost)}\n`;
+  msg += `\n*🏷️ TEKLİF: ${fmtMoney(offer)}*\n`;
+  if (d.note) msg += `\n📝 Not: ${d.note}`;
+  return msg;
+}
+
+function shareWhatsApp() {
+  const offer = parseFloat(document.getElementById('offerPrice').value) || 0;
+  if (!offer) { showToast('Önce teklif fiyatı girin!', 'error'); return; }
+  const text = buildWhatsAppText();
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
+
+function shareQuote() {
+  const offer = parseFloat(document.getElementById('offerPrice').value) || 0;
+  if (!offer) { showToast('Önce teklif fiyatı girin!', 'error'); return; }
+  const text = buildWhatsAppText();
+  if (navigator.share) {
+    navigator.share({ title: 'GES-O Teklif', text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast('Teklif panoya kopyalandı!', 'success')).catch(() => {
+      showToast('Paylaşım desteklenmiyor', 'error');
+    });
+  }
 }
 
 // ============ TABS ============
