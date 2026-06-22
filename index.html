@@ -1246,7 +1246,7 @@ function printProjectById(id) {
   if (!p) return;
   const matRows = (p.materials || []).filter(m => m.qty > 0).map(m => {
     const isMt = m.name.includes('(mt)');
-    return `<tr><td>${esc(m.name)}</td><td style="text-align:center">${m.qty} ${isMt ? 'mt' : 'ad'}</td><td style="text-align:right">${fmtMoney(m.price)}</td><td style="text-align:right">${fmtMoney(m.qty * m.price)}</td></tr>`;
+    return `<tr><td>${esc(m.name)}</td><td style="text-align:center">${m.qty} ${isMt ? 'mt' : 'ad'}</td></tr>`;
   }).join('');
   const tags = [p.systemType, p.installLocation, p.kwp > 0 ? p.kwp.toFixed(2) + ' kWp' : ''].filter(Boolean).join(' · ');
   document.getElementById('printView').innerHTML = `
@@ -1257,7 +1257,7 @@ function printProjectById(id) {
       <div style="text-align:right"><b>Tarih:</b> ${p.date}</div>
     </div>
     <table>
-      <thead><tr><th>Ürün / Malzeme</th><th style="text-align:center">Miktar</th><th style="text-align:right">Birim Fiyat</th><th style="text-align:right">Toplam</th></tr></thead>
+      <thead><tr><th>Ürün / Malzeme</th><th style="text-align:center">Miktar</th></tr></thead>
       <tbody>${matRows}</tbody>
     </table>
     <table class="pv-totals">
@@ -1282,7 +1282,7 @@ function shareProjectWhatsApp(id) {
   msg += `\n*📦 Malzeme Listesi:*\n`;
   (p.materials || []).filter(m => m.qty > 0).forEach(m => {
     const isMt = m.name.includes('(mt)');
-    msg += `• ${m.name.replace(/^[^-]+ - /, '')} × ${m.qty} ${isMt ? 'mt' : 'ad'} = ${fmtMoney(m.qty * m.price)}\n`;
+    msg += `• ${m.name.replace(/^[^-]+ - /, '')} × ${m.qty} ${isMt ? 'mt' : 'ad'}\n`;
   });
   msg += `\n━━━━━━━━━━━━━━━━━━\n`;
   msg += `📊 Malzeme: ${fmtMoney(p.matTotal)}\n👷 İşçilik: ${fmtMoney(p.laborTotal)}\n💰 Maliyet: ${fmtMoney(p.cost)}\n`;
@@ -1521,7 +1521,7 @@ function printQuote() {
 
   const matRows = materials.filter(m => m.qty > 0).map(m => {
     const isMt = m.name.includes('(mt)');
-    return `<tr><td>${esc(m.name)}</td><td style="text-align:center">${m.qty} ${isMt ? 'mt' : 'ad'}</td><td style="text-align:right">${fmtMoney(m.price)}</td><td style="text-align:right">${fmtMoney(m.qty * m.price)}</td></tr>`;
+    return `<tr><td>${esc(m.name)}</td><td style="text-align:center">${m.qty} ${isMt ? 'mt' : 'ad'}</td></tr>`;
   }).join('');
 
   const tags = [d.systemType, d.installLocation, d.kwp > 0 ? d.kwp.toFixed(2) + ' kWp' : ''].filter(Boolean).join(' · ');
@@ -1534,7 +1534,7 @@ function printQuote() {
       <div style="text-align:right"><b>Tarih:</b> ${d.date}</div>
     </div>
     <table>
-      <thead><tr><th>Ürün / Malzeme</th><th style="text-align:center">Miktar</th><th style="text-align:right">Birim Fiyat</th><th style="text-align:right">Toplam</th></tr></thead>
+      <thead><tr><th>Ürün / Malzeme</th><th style="text-align:center">Miktar</th></tr></thead>
       <tbody>${matRows}</tbody>
     </table>
     <table class="pv-totals">
@@ -1563,7 +1563,7 @@ function buildWhatsAppText() {
 
   materials.filter(m => m.qty > 0).forEach(m => {
     const isMt = m.name.includes('(mt)');
-    msg += `• ${m.name.replace(/^[^-]+ - /, '')} × ${m.qty} ${isMt ? 'mt' : 'ad'} = ${fmtMoney(m.qty * m.price)}\n`;
+    msg += `• ${m.name.replace(/^[^-]+ - /, '')} × ${m.qty} ${isMt ? 'mt' : 'ad'}\n`;
   });
 
   msg += `\n━━━━━━━━━━━━━━━━━━\n`;
