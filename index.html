@@ -546,14 +546,29 @@ const LABOR_MIN = 8000;
 
 // ============ CATALOG MANAGEMENT ============
 function mergeMissingDefaults(cat) {
-  const ids = new Set(cat.map(p => p.id));
-  DEFAULT_CATALOG.forEach(p => { if (!ids.has(p.id)) cat.push({...p}); });
+  const catMap = {};
+  cat.forEach(p => { catMap[p.id] = p; });
+  DEFAULT_CATALOG.forEach(def => {
+    if (catMap[def.id]) {
+      // Yapısal alanları DEFAULT'tan güncelle, fiyatı koru
+      catMap[def.id].name = def.name;
+      catMap[def.id].group = def.group;
+      if (def.subgroup !== undefined) catMap[def.id].subgroup = def.subgroup;
+      else delete catMap[def.id].subgroup;
+    } else {
+      cat.push({...def});
+    }
+  });
   return cat;
 }
 
 function getCatalog() {
   const saved = localStorage.getItem('gesCatalog');
-  if (saved) return mergeMissingDefaults(JSON.parse(saved));
+  if (saved) {
+    const merged = mergeMissingDefaults(JSON.parse(saved));
+    localStorage.setItem('gesCatalog', JSON.stringify(merged));
+    return merged;
+  }
   const fresh = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
   localStorage.setItem('gesCatalog', JSON.stringify(fresh));
   return fresh;
