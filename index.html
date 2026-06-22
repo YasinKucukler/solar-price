@@ -140,6 +140,12 @@ header .subtitle{font-size:.78rem;opacity:.85;margin-top:2px}
 .price-group-header.open .arrow{transform:rotate(180deg)}
 .price-group-body{display:none;padding:8px}
 .price-group-body.show{display:block}
+.price-subgroup{margin-bottom:6px;border:1px solid #ffe0b2;border-radius:8px;overflow:hidden}
+.price-subgroup-header{background:#fff3e0;padding:10px 12px;font-weight:600;font-size:.85rem;color:var(--primary);cursor:pointer;display:flex;justify-content:space-between;align-items:center;min-height:44px;-webkit-tap-highlight-color:transparent}
+.price-subgroup-header .sg-arrow{transition:.2s;font-size:.85rem;opacity:.7}
+.price-subgroup-header.open .sg-arrow{transform:rotate(90deg)}
+.price-subgroup-body{display:none;padding:6px 8px;background:#fffaf5}
+.price-subgroup-body.show{display:block}
 .price-row{display:flex;gap:8px;align-items:center;padding:7px 4px;font-size:.88rem;flex-wrap:wrap}
 .price-row .pr-name{flex:2;font-weight:500;min-width:100px}
 .price-row .pr-field{display:flex;flex-direction:column;gap:2px;align-items:center}
@@ -1355,6 +1361,35 @@ function recalculateWithCommission(rate) {
 // ─── Fiyat Kilitleme (kaldırıldı) ────────────────────────────────────────────
 function getLockedPrices() { return new Set(); }
 
+function buildPriceRow(p, rawPrices, priceUrls) {
+  const raw = rawPrices[p.id];
+  const urls = priceUrls[p.id];
+  let html = `<div class="price-row">
+    <div style="flex:2;min-width:100px">
+      <span class="pr-name">${esc(p.name)}</span>`;
+  if (raw) html += `<br><span style="font-size:.72rem;color:var(--text2)">Web: ${fmtMoney(raw.min)} – ${fmtMoney(raw.max)}</span>`;
+  html += `</div>
+    <div class="pr-field">
+      <span class="pr-label">${raw ? 'Komisyonlu' : 'Fiyat'}</span>
+      <input type="number" value="${p.price}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','price',this.value)">
+    </div>`;
+  if (!raw && p.priceMax !== undefined && p.priceMax !== null) {
+    html += `<div class="pr-field">
+      <span class="pr-label">Max</span>
+      <input type="number" value="${p.priceMax}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','priceMax',this.value)">
+    </div>`;
+  }
+  if (urls && urls.length) {
+    urls.forEach(u => {
+      html += `<a href="${u.url}" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;background:#1565c0;color:#fff;border-radius:8px;font-size:.78rem;font-weight:600;text-decoration:none;min-height:44px;white-space:nowrap"
+        title="${esc(u.url)}">${esc(u.site)}</a>`;
+    });
+  }
+  html += `<button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${p.id}')">Sil</button></div>`;
+  return html;
+}
+
 function renderPriceEditor() {
   const groups = getGroups();
   const rawPrices = getRawPrices();
@@ -1374,42 +1409,34 @@ function renderPriceEditor() {
   </div>`;
 
   Object.keys(groups).forEach(g => {
+    const items = groups[g];
+    const hasSubgroups = items.some(p => p.subgroup);
+
     html += `<div class="price-group">
       <div class="price-group-header" onclick="togglePriceGroup(this)">
-        <span>${esc(g)} (${groups[g].length})</span>
+        <span>${esc(g)} (${items.length})</span>
         <span class="arrow">&#9660;</span>
       </div>
       <div class="price-group-body">`;
-    groups[g].forEach(p => {
-      const raw = rawPrices[p.id];
-      const urls = priceUrls[p.id];
-      html += `<div class="price-row">
-        <div style="flex:2;min-width:100px">
-          <span class="pr-name">${esc(p.name)}</span>`;
-      if (raw) {
-        html += `<br><span style="font-size:.72rem;color:var(--text2)">Web: ${fmtMoney(raw.min)} – ${fmtMoney(raw.max)}</span>`;
-      }
-      html += `</div>
-        <div class="pr-field">
-          <span class="pr-label">${raw ? 'Komisyonlu' : 'Fiyat'}</span>
-          <input type="number" value="${p.price}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','price',this.value)">
-        </div>`;
-      if (!raw && p.priceMax !== undefined && p.priceMax !== null) {
-        html += `<div class="pr-field">
-          <span class="pr-label">Max</span>
-          <input type="number" value="${p.priceMax}" min="0" step="0.1" onchange="updateCatalogPrice('${p.id}','priceMax',this.value)">
-        </div>`;
-      }
-      if (urls && urls.length) {
-        urls.forEach(u => {
-          html += `<a href="${u.url}" target="_blank" rel="noopener"
-            style="display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;background:#1565c0;color:#fff;border-radius:8px;font-size:.78rem;font-weight:600;text-decoration:none;min-height:44px;white-space:nowrap"
-            title="${esc(u.url)}">${esc(u.site)}</a>`;
-        });
-      }
-      html += `<button class="btn btn-danger btn-sm" onclick="deleteCatalogItem('${p.id}')">Sil</button>
-      </div>`;
-    });
+
+    if (hasSubgroups) {
+      const subgroups = [...new Set(items.map(p => p.subgroup).filter(Boolean))];
+      subgroups.forEach(sg => {
+        const sgItems = items.filter(p => p.subgroup === sg);
+        html += `<div class="price-subgroup">
+          <div class="price-subgroup-header" onclick="togglePriceSubgroup(this)">
+            <span>${esc(sg)} (${sgItems.length})</span>
+            <span class="sg-arrow">›</span>
+          </div>
+          <div class="price-subgroup-body">`;
+        sgItems.forEach(p => { html += buildPriceRow(p, rawPrices, priceUrls); });
+        html += `</div></div>`;
+      });
+      items.filter(p => !p.subgroup).forEach(p => { html += buildPriceRow(p, rawPrices, priceUrls); });
+    } else {
+      items.forEach(p => { html += buildPriceRow(p, rawPrices, priceUrls); });
+    }
+
     html += '</div></div>';
   });
   container.innerHTML = html;
@@ -1417,8 +1444,12 @@ function renderPriceEditor() {
 
 function togglePriceGroup(header) {
   header.classList.toggle('open');
-  const body = header.nextElementSibling;
-  body.classList.toggle('show');
+  header.nextElementSibling.classList.toggle('show');
+}
+
+function togglePriceSubgroup(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('show');
 }
 
 function updateCatalogPrice(id, field, val) {
