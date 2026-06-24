@@ -782,7 +782,16 @@ function renderProductGroups() {
 
       if (hasSubgroups) {
         const subgroups = [...new Set(items.map(p => p.subgroup).filter(Boolean))];
-        if (!openSubgroup) {
+        const flatGroups = new Set(['Gunes Paneli']);
+
+        if (flatGroups.has(g)) {
+          // Başlık modunda — alt grup butonu yok, inline başlık
+          subgroups.forEach(sg => {
+            html += `<div style="font-size:.78rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;padding:8px 2px 4px;border-bottom:1px solid #ffe0b2;margin-bottom:6px;margin-top:4px">${esc(sg)}</div>`;
+            items.filter(p => p.subgroup === sg).forEach(p => { html += buildProductRow(p); });
+          });
+          items.filter(p => !p.subgroup).forEach(p => { html += buildProductRow(p); });
+        } else if (!openSubgroup) {
           subgroups.forEach(sg => {
             const safeSg = sg.replace(/'/g, "\\'");
             const sgItems = items.filter(p => p.subgroup === sg);
